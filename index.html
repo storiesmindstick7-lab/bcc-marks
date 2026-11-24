@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BCC Marks Schedule</title>
+<style>
+:root{--bg:#f8fafc;--card:#fff;--fg:#0f172a;--muted:#64748b;--border:#e2e8f0;--primary:#0f172a;--accent:#f1f5f9;--danger:#dc2626;--ok:#15803d;--navy:#1e3a5f;--gold:#C9A24B}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--fg);font-size:14px}
+button{font:inherit;cursor:pointer}
+input,select{font:inherit}
+.layout{display:flex;min-height:100vh}
+.side{width:240px;background:#fff;border-right:1px solid var(--border);padding:12px 10px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow:auto;display:flex;flex-direction:column}
+.brand{display:flex;gap:8px;align-items:center;font-weight:700;padding:6px 8px 14px}
+.brand svg{width:24px;height:24px}
+.navlbl{font-size:11px;color:var(--muted);padding:10px 8px 4px}
+.nav a{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:8px;color:var(--fg);text-decoration:none;margin-bottom:2px}
+.nav a:hover{background:var(--accent)}
+.nav a.on{background:var(--accent);font-weight:600}
+.pbox{margin:6px 4px 4px;padding:10px;border:1px solid var(--border);border-radius:10px;background:#f8fafc}
+.pbox .n{font-weight:700;font-size:13px;line-height:1.3}
+.main{flex:1;min-width:0}
+.page{padding:24px;max-width:1200px;margin:0 auto}
+.page.narrow{max-width:820px}
+h1{font-size:24px;margin:0 0 4px;display:flex;align-items:center;gap:8px}
+.sub{color:var(--muted);font-size:13px;margin:0 0 20px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px}
+.card h3{margin:0 0 14px;font-size:16px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid transparent;background:var(--primary);color:#fff;padding:8px 14px;border-radius:8px;font-weight:500;font-size:14px}
+.btn:hover{opacity:.9}
+.btn.out{background:#fff;color:var(--fg);border-color:var(--border)}
+.btn.out:hover{background:var(--accent)}
+.btn.ghost{background:transparent;color:var(--fg)}
+.btn.ghost:hover{background:var(--accent)}
+.btn.sec{background:var(--accent);color:var(--fg)}
+.btn.sm{padding:5px 10px;font-size:13px}
+.btn.lg{padding:10px 18px;font-size:15px}
+.btn.danger{background:var(--danger)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+label.l{display:block;font-weight:500;margin-bottom:6px;font-size:13px}
+.inp{width:100%;border:1px solid var(--border);border-radius:8px;padding:8px 10px;background:#fff}
+.inp:focus{outline:2px solid #94a3b8;outline-offset:0}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+.g3{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.tile{border:2px solid var(--border);background:#fff;border-radius:16px;padding:22px;text-align:left;transition:.15s}
+.tile:hover{border-color:var(--primary);box-shadow:0 4px 14px rgba(0,0,0,.06)}
+.tile .big{font-size:24px;font-weight:700}
+.tile .small{font-size:12px;color:var(--muted);margin-top:4px}
+.pcard{border:1px solid var(--border);background:#fff;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:6px}
+.pcard.on{border:2px solid var(--primary)}
+.pcard .nm{font-size:17px;font-weight:700;line-height:1.25}
+.empty{padding:48px;text-align:center;color:var(--muted)}
+table.dt{width:100%;border-collapse:collapse;font-size:13px}
+table.dt th{background:var(--accent);position:sticky;top:0;padding:8px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);text-align:left;z-index:1}
+table.dt td{border-bottom:1px solid var(--border);border-right:1px solid var(--border);padding:0}
+table.dt td.c{text-align:center;padding:6px;background:#f8fafc}
+table.dt td.p{padding:6px 8px}
+table.dt input{width:100%;border:0;padding:6px 8px;background:transparent;outline:none}
+table.dt input:focus{background:#e0f2fe}
+.scroll{overflow:auto;border:1px solid var(--border);border-radius:8px;max-height:62vh}
+.hint{font-size:12px;color:var(--muted)}
+.err{color:var(--danger);font-size:13px}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
+.modal{background:#fff;border-radius:12px;padding:22px;width:100%;max-width:880px;max-height:92vh;display:flex;flex-direction:column;gap:14px;overflow:auto}
+.modal.smm{max-width:460px}.modal.md{max-width:620px}
+.modal h2{margin:0;font-size:18px}
+.foot{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+#toast{position:fixed;bottom:20px;right:20px;z-index:99;display:flex;flex-direction:column;gap:8px}
+.t{background:#fff;border:1px solid var(--border);box-shadow:0 6px 20px rgba(0,0,0,.12);border-radius:10px;padding:10px 14px;min-width:220px}
+.t.err{border-left:4px solid var(--danger);color:var(--fg)}.t.ok{border-left:4px solid var(--ok)}
+.stat{border:1px solid var(--border);border-radius:12px;background:#fff;padding:14px}
+.stat .k{font-size:12px;color:var(--muted)}.stat .v{font-size:22px;font-weight:700;margin-top:4px}
+.badge{display:inline-block;background:var(--accent);border-radius:6px;padding:3px 8px;font-size:12px;font-weight:600}
+.badge.dark{background:var(--primary);color:#fff}
+.subj{display:flex;gap:6px;align-items:center;margin-bottom:6px}
+.subj .ix{width:26px;text-align:right;color:var(--muted);font-size:12px}
+.subj .hd{cursor:grab;user-select:none;font-size:16px;color:var(--muted);width:22px;text-align:center}
+.subj.drag{opacity:.4}.subj.over{box-shadow:0 -3px 0 #0f172a}
+.ordname{flex:1;border:1px solid var(--border);border-radius:8px;padding:8px 10px;background:#f8fafc}
+.subj input{flex:1}
+.x{border:1px solid var(--border);background:#fff;border-radius:8px;width:34px;height:36px}
+.x:hover{background:#fee2e2}
+.checks{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:4px 12px;max-height:200px;overflow:auto;border:1px solid var(--border);border-radius:8px;padding:10px}
+.checks label{display:flex;gap:6px;align-items:center;font-size:13px}
+.hamb{display:none}
+.login{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f1f5f9;padding:16px}
+.login .card{width:100%;max-width:380px;padding:28px}
+@media (max-width:820px){.side{position:fixed;left:-250px;z-index:40;transition:.2s}.side.open{left:0}.hamb{display:inline-flex;margin:10px}}
+
+/* ================= A3 MARKS SCHEDULE (print-ready, black only) ================= */
+.a3{width:392mm;height:283mm;background:#fff;color:#000;overflow:hidden;position:relative;
+  font-family:Calibri,Carlito,"Segoe UI",Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.a3-in{width:100%;height:100%;display:flex;flex-direction:column;transform-origin:top left}
+.a3 .hdr{display:grid;grid-template-columns:34mm 1fr 70mm;align-items:center;gap:4mm;padding-bottom:1.6mm;border-bottom:2.4pt double #000;margin-bottom:2.2mm;height:31mm;flex:none}
+.a3 .lg{height:26mm;display:flex;align-items:center;justify-content:center}
+.a3 .lg img{max-height:26mm;max-width:32mm;object-fit:contain}
+.a3 .ctr{text-align:center;line-height:1.12}
+.a3 .k1{font-size:11pt;font-weight:700;letter-spacing:4pt}
+.a3 .k2{font-family:Cambria,Caladea,"Times New Roman",serif;font-size:22pt;font-weight:700;text-transform:uppercase;margin:.6mm 0 .8mm;letter-spacing:.3pt}
+.a3 .k3{font-size:11.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1.5pt}
+.a3 .k4{font-size:11pt;font-weight:600;margin-top:.4mm}
+.a3 .info{border-collapse:collapse;width:100%;font-size:8.8pt;border:1pt solid #000}
+.a3 .info th{text-align:left;font-weight:700;padding:.7mm 1.6mm;border:.5pt solid #000;width:27mm}
+.a3 .info td{padding:.7mm 1.6mm;border:.5pt solid #000;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:40mm}
+.a3 .bd{display:flex;gap:3mm;flex:none;align-items:flex-start}
+.a3 table.mt{border-collapse:collapse;table-layout:fixed;border:1.2pt solid #000;font-size:7.6pt}
+.a3 .mt th,.a3 .mt td{border:.5pt solid #000;padding:0 .6mm;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.a3 .mt thead th{font-weight:700;font-size:8pt;border-bottom:1.2pt solid #000;vertical-align:middle}
+.a3 .mt th.v div{writing-mode:vertical-rl;transform:rotate(180deg);margin:0 auto;white-space:normal;max-height:23mm;line-height:1.05;text-align:left}
+.a3 .mt td.nm{text-align:left;padding-left:1.2mm}
+.a3 .mt td.b{font-weight:700}
+.a3 .mt .gl{border-left:1.2pt solid #000}
+.a3 .mt tbody tr.f5 td{border-bottom:1pt solid #000}
+.a3 .sd{display:flex;flex-direction:column;gap:2.4mm;flex:none}
+.a3 table.st{border-collapse:collapse;table-layout:fixed;width:100%;font-size:7.4pt;border:1.2pt solid #000}
+.a3 .st th,.a3 .st td{border:.5pt solid #000;padding:0 .9mm;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.a3 .st th{font-weight:700}
+.a3 .st th.tt{font-size:8pt;letter-spacing:1.2pt;text-transform:uppercase;border-bottom:1.6pt double #000}
+.a3 .st td.l{text-align:left}
+.a3 .key{font-size:7.4pt;border:1pt solid #000;padding:1.2mm 1.6mm;line-height:1.45}
+.a3 .ft{display:grid;grid-template-columns:repeat(3,1fr);gap:16mm;padding:0 8mm;margin-top:auto;flex:none;height:13mm;align-items:end}
+.a3 .ft div{text-align:center;font-size:8.6pt;font-weight:700}
+.a3 .ft .ln{border-top:.8pt dotted #000;padding-top:1mm}
+.a3 .ft .nmx{font-weight:500;font-size:8pt;margin-top:.4mm;min-height:3mm}
+.a3wrap{overflow:auto;border:1px solid var(--border);border-radius:8px;background:#e5e7eb;padding:14px}
+.a3wrap .a3{box-shadow:0 2px 12px rgba(0,0,0,.18);margin:0 auto 14px}
+
+/* ================= Slides ================= */
+.deck{position:fixed;inset:0;background:#171717;z-index:45;display:flex;flex-direction:column}
+.deck .bar{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:#262626;color:#fff}
+.deck .stage{flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.deck .thumbs{background:#262626;padding:8px;display:flex;gap:6px;overflow-x:auto}
+.deck .thumbs button{background:#404040;color:#fff;border:0;border-radius:4px;padding:6px 12px}
+.deck .thumbs button.on{background:#fff;color:#111}
+.arrow{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.2);color:#fff;border:0;border-radius:50%;width:40px;height:40px;font-size:20px}
+.slide{width:1280px;height:720px;background:#fff;color:#111;display:flex;flex-direction:column;font-family:Georgia,"Times New Roman",serif;flex-shrink:0}
+.slide .sh{background:var(--navy);color:#fff;padding:16px 28px;font-size:24px;font-weight:700;border-bottom:5px solid var(--gold)}
+.slide .sb{flex:1;padding:22px 28px;min-height:0;overflow:hidden;font-family:system-ui,sans-serif}
+.slide table{border-collapse:collapse;width:100%}
+.slide th{background:var(--navy);color:#fff}
+.slide th,.slide td{border:1px solid #444;padding:4px 6px;text-align:center}
+.panel{border:2px solid var(--navy);border-radius:8px;padding:10px;background:#fff}
+.kpi{border-radius:10px;color:#fff;padding:16px}
+.kpi .k{font-size:14px;opacity:.85}.kpi .v{font-size:40px;font-weight:700}
+#printroot{display:none}
+
+@page{size:A3 landscape;margin:0.25in 0.25in 0.25in 0.8in}
+@page deck{size:A3 landscape;margin:0}
+@media print{
+  body{background:#fff}
+  body.printing .layout,body.printing #toast,body.printing #modal,body.printing .login{display:none!important}
+  body.printing #printroot{display:block}
+  #printroot .a3{box-shadow:none;margin:0;break-after:page;page-break-after:always;break-inside:avoid;page-break-inside:avoid}
+  #printroot .a3:last-child{break-after:auto;page-break-after:auto}
+  #printroot .dpage{page:deck;width:420mm;height:297mm;overflow:hidden;break-after:page}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="modal"></div>
+<div id="toast"></div>
+<div id="printroot"></div>
+
+<script>
+/* =====================================================================
+   Student Marks Schedule System — single-file edition
+   All data is saved in this browser (localStorage).
+   ===================================================================== */
+const LOGIN = {user:'bcc123', pass:'bcc123'};
+
+// ---------- Constants ----------
+const YEARS = ['2025','2026','2027','2028','2029','2030'];
+const TERMS = ['1st','2nd','3rd','4th','5th'];
+const SECTIONS = {'Primary':{from:1,to:5,label:'Primary (Grades 1 – 5)'},'Secondary':{from:6,to:9,label:'Secondary (Grades 6 – 9)'},'Senior Secondary':{from:10,to:11,label:'Senior Secondary (Grades 10 – 11)'},'A.L':{from:12,to:13,label:'A.L (Grades 12 – 13)'}};
+const DEFDIV = {'Secondary':12,'Senior Secondary':9};   // existing method: ÷12 for Grades 6–9, ÷9 for Grades 10–11
+const SUGGEST = {
+  'Primary':['Religion','Tamil','Mathematics','English','Environment','Sinhala'],
+  'Secondary':['Religion','Tamil Lang','Mathematics','English','Science','Geography','Sinhala','Civics','P.T.S','History','Health','Art','English Lit'],
+  'Senior Secondary':['Religion','Tamil Lang','Mathematics','English','Science','History','Sinhala','Commerce','ICT','Geography','Civics','Health','Art','Home Econ','Designing','Tamil Lit','English Lit','Arab Lit'],
+  'A.L':['General English','G.I.T']
+};
+const MAIN_SUBJ = ['Religion','Tamil','Tamil Lang','Mathematics','English','Science','History'];
+const ROWS = 52;
+
+// ---------- Grading (unchanged method) ----------
+const gradeNo = n => { const m = String(n).match(/^(\d+)/); return m ? parseInt(m[1],10) : 0; };
+const isMark = v => typeof v === 'number' && v >= 0;
+const isAb = v => v === -1;
+// Grade bands — customisable per section in each marksheet. GB/PASS hold the bands of the class being worked on.
+const DEFAULT_BANDS=[{g:'A',min:75},{g:'B',min:65},{g:'C',min:50},{g:'S',min:35},{g:'W',min:0}];
+const BAND_PRESETS={'Standard (A B C S W)':DEFAULT_BANDS,'With D (A B C S W D)':[{g:'A',min:75},{g:'B',min:65},{g:'C',min:50},{g:'S',min:35},{g:'W',min:20},{g:'D',min:0}]};
+let GB=DEFAULT_BANDS, PASS=35;
+const GL = () => GB.map(b=>b.g);
+const zeroCounts = () => Object.fromEntries(GL().map(g=>[g,0]));
+const grade = m => { if(m==null||isNaN(m)||m<0) return ''; const b=GB.find(x=>m>=x.min); return b?b.g:''; };
+const bandRanges = (B=GB) => B.map((b,i)=>({g:b.g,min:b.min,max:i===0?100:B[i-1].min-1}));
+const bandText = (B=GB,sep='  ') => bandRanges(B).map(r=>`${r.g} = ${r.min}–${r.max}`).join(sep);
+const normBands = b => (b&&b.length?b:DEFAULT_BANDS).map(x=>({g:String(x.g).trim(),min:+x.min})).sort((a,c)=>c.min-a.min);
+const GCOL = ['#1B5E20','#2E7D32','#9E9D24','#F9A825','#EF6C00','#C62828','#8E0000','#4E342E'];
+const gradeColors = () => GL().map((_,i,a)=>GCOL[Math.round(i*(GCOL.length-1)/Math.max(1,a.length-1))]);
+const cellText = v => isMark(v) ? `${v}-${grade(v)}` : isAb(v) ? 'Ab' : '';
+const uid = () => Math.random().toString(36).slice(2,10);
+const sortClasses = a => [...a].sort((x,y)=>x.name.localeCompare(y.name,undefined,{numeric:true,sensitivity:'base'}));
+const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const filled = cls => cls.students.filter(s=>(s.admissionNo||'').trim()||(s.name||'').trim());
+const profName = (y,t) => `${t} Term Marks Schedule ${y}`;
+function rankMap(rows){
+  const r = rows.filter(x=>x.marks.some(isMark)).sort((a,b)=>b.total-a.total);
+  const m = new Map(); let prev=null, pr=0;
+  r.forEach((x,i)=>{ const k = prev!==null && x.total===prev ? pr : i+1; m.set(x.s.id,k); prev=x.total; pr=k; });
+  return m;
+}
+
+// ---------- Store ----------
+const KEY = 'bcc-marks-v2';
+let MODE = 'admin';             // 'teacher' when a class teacher opened a private link
+// Online edition: data lives in Firebase Firestore; S is the in-memory copy kept in sync.
+let S = {school:{name:'',logo:''},settings:{},profiles:[],activeId:null};
+function load(){
+  try{ const d = JSON.parse(localStorage.getItem(KEY)); if(d && d.profiles) return normalise(d); }catch(e){}
+  return normalise(migrateV1() || {school:{name:'',logo:''},profiles:[],activeId:null});
+}
+function splitSenior(p){ // older files had one Secondary section for Grades 6–11 with two divisors
+  const s=p.sections&&p.sections.Secondary; if(!s||!s.div||(s.div.lower==null&&s.div.upper==null)) return;
+  const hasSenior=(p.classes||[]).some(c=>{ const g=gradeNo(c.name); return g>=10&&g<=11; });
+  if(hasSenior&&!p.sections['Senior Secondary']) p.sections['Senior Secondary']={subjects:[...s.subjects],div:{all:s.div.upper??9},grades:s.grades,pass:s.pass};
+  s.div={all:s.div.lower??12};
+}
+function normalise(d){ // older files kept one marksheet per section; merge them into one marksheet per term
+  if(!d.profiles.some(p=>p.section)){ d.profiles.forEach(splitSenior); return d; }
+  const byTerm={}, out=[];
+  d.profiles.forEach(p=>{
+    if(!p.section){ out.push(p); return; }
+    const k=p.year+'|'+p.term; let t=byTerm[k];
+    if(!t){ t=byTerm[k]={id:p.id,year:p.year,term:p.term,name:profName(p.year,p.term),sections:{},classes:[],created:p.created||Date.now()}; out.push(t); }
+    if(d.activeId===p.id) d.activeId=t.id;
+    t.sections[p.section]={subjects:p.subjects||[],div:p.div||{}};
+    t.classes.push(...(p.classes||[]));
+  });
+  out.forEach(p=>{ p.sections=p.sections||{}; p.classes=sortClasses(p.classes||[]); splitSenior(p); });
+  d.profiles=out; return d;
+}
+function migrateV1(){ // bring over data from the first version, if any
+  try{
+    const o = JSON.parse(localStorage.getItem('bcc-marks-v1')); if(!o||!o.profile) return null;
+    const st = {school:{name:o.profile.schoolName||'',logo:o.profile.logo||''},profiles:[],activeId:null};
+    const terms = {...(o.archives||{})}; terms[`${o.profile.year}|${o.profile.term}`]=o.classes;
+    const subs = [...SUGGEST.Secondary,'Commerce','ICT','Home Econ','Designing','Tamil Lit','Arab Lit'];
+    Object.entries(terms).forEach(([k,cl])=>{ if(!cl||!cl.length) return; const [y,t]=k.split('|');
+      st.profiles.push({id:uid(),year:y,term:t,section:'Secondary',name:profName(y,t),subjects:subs,div:{lower:12,upper:9,all:subs.length},classes:cl,created:Date.now()}); });
+    return st;
+  }catch(e){ return null; }
+}
+function save(){ if(MODE==='admin'&&S.activeId){ try{ localStorage.setItem('bcc-active',S.activeId); }catch(e){} } queueSync(); }
+const P = () => S.profiles.find(p=>p.id===S.activeId) || null;
+const getClass = id => P()?.classes.find(c=>c.id===id);
+const SECKEYS = Object.keys(SECTIONS);
+const secOf = cls => { const g=gradeNo(typeof cls==='string'?cls:cls.name); return SECKEYS.find(k=>g>=SECTIONS[k].from&&g<=SECTIONS[k].to)||null; };
+const secData = (prof, sec) => (prof && prof.sections && prof.sections[sec]) || {subjects:[],div:{}};
+function useBands(cls, prof=P()){ const d=secData(prof,secOf(cls)); GB=normBands(d.grades); PASS=(d.pass!=null&&d.pass!=='')?+d.pass:35; }
+const usedSecs = prof => SECKEYS.filter(k=>secData(prof,k).subjects.length);
+const subjectsFor = (cls, prof=P()) => { const all = secData(prof,secOf(cls)).subjects; return (cls.subjects && cls.subjects.length) ? all.filter(s=>cls.subjects.includes(s)) : all; };
+const divisorFor = (cls, prof=P()) => {
+  const sec=secOf(cls), d=secData(prof,sec).div||{};
+  let v = d.all;
+  v = Number(v); return v>0 ? v : subjectsFor(cls,prof).length || 1;
+};
+function setMark(cid,sid,sub,val){
+  const c = getClass(cid); c.marks[sid] = c.marks[sid]||{};
+  if(val===null||Number.isNaN(val)) delete c.marks[sid][sub]; else c.marks[sid][sub]=val;
+  save();
+}
+const termOrder = p => Number(p.year)*10 + TERMS.indexOf(p.term);
+
+// ---------- UI helpers ----------
+function toast(msg,type='ok'){ const t=document.createElement('div'); t.className='t '+type; t.textContent=msg; document.getElementById('toast').appendChild(t); setTimeout(()=>t.remove(),2800); }
+const $ = s => document.querySelector(s);
+const view = h => { const v=$('#view'); if(v) v.innerHTML = h; };
+const CAP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>';
+function modal(html,cls=''){ $('#modal').innerHTML = `<div class="modal-bg"><div class="modal ${cls}">${html}</div></div>`; }
+function closeModal(){ $('#modal').innerHTML=''; }
+function download(name, content, mime){
+  const b = content instanceof Blob ? content : new Blob([content],{type:mime});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = name; document.body.appendChild(a); a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},800);
+}
+function classTiles(list, onclick, extra=c=>`${esc(secOf(c)||'')} · ${filled(c).length} students`){
+  if(!list.length) return `<div class="card empty">No classes yet. Add classes first in "Students & Classes".</div>`;
+  return `<div class="grid g2">`+list.map(c=>`<button class="tile" onclick="${onclick}('${c.id}')"><div class="big">${esc(c.name)}</div><div class="small">${extra(c)}</div></button>`).join('')+`</div>`;
+}
+const fileSafe = s => String(s).replace(/[\\/:*?"<>|]+/g,'-');
+
+// =====================================================================
+// LOGIN
+// =====================================================================
+const authed = () => ONLINE.admin===true;
+function renderLogin(msg){
+  const links=teacherLinks();
+  $('#app').innerHTML = `<div class="login"><div class="card"><div style="text-align:center;margin-bottom:18px">${S.school.logo?`<img src="${S.school.logo}" style="height:64px;object-fit:contain">`:CAP.replace('<svg','<svg width="40" height="40"')}<div style="font-size:19px;font-weight:700;margin-top:6px">Marks Schedule Login</div>
+    ${S.school.name?`<div class="hint" style="margin-top:4px">${esc(S.school.name)}</div>`:''}</div>
+    <form id="lf"><label class="l">Username</label><input class="inp" id="lu" autocomplete="username" autofocus style="margin-bottom:14px">
+    <label class="l">Password</label><input class="inp" id="lp" type="password" autocomplete="current-password" style="margin-bottom:18px">
+    <button class="btn" id="lbtn" style="width:100%">→ Sign In</button><p class="err" id="le" style="text-align:center;min-height:18px;margin:10px 0 0">${msg?esc(msg):''}</p><div id="lsetup"></div></form>
+    <div style="border-top:1px solid var(--border);margin-top:14px;padding-top:14px">
+      <div style="font-weight:600;font-size:13px;margin-bottom:6px">Class teacher?</div>
+      ${links.map(t=>`<button class="btn out" style="width:100%;margin-bottom:6px;justify-content:flex-start" onclick="openTeacherLink('${t.token}')">✎ Continue — Class ${esc(t.cls)} · ${esc(t.term)}</button>`).join('')}
+      <div class="row" style="flex-wrap:nowrap"><input class="inp" id="tl" placeholder="Paste your private link here"><button class="btn out" onclick="openTeacherLink(document.getElementById('tl').value)">Open</button></div>
+      <div class="hint" style="margin-top:4px">Open the private link the admin sent you by WhatsApp or email.</div></div>
+    <p style="text-align:center;margin:10px 0 0"><a href="#/parent" class="hint">Parents: view results →</a></p></div></div>`;
+  $('#lf').onsubmit = async e => { e.preventDefault();
+    const u=$('#lu').value.trim().toLowerCase(), pw=$('#lp').value; if(!u||!pw) return;
+    $('#lbtn').disabled=true; $('#le').textContent='Signing in…'; $('#lsetup').innerHTML='';
+    try{ await ADB.signIn(adminEmail(u),pw); await startAdmin(); toast('Signed in'); route(); }
+    catch(err){ $('#lbtn').disabled=false; const c=err&&err.code||'';
+      if(/network/.test(c)) $('#le').textContent='No internet connection. Check your connection and try again.';
+      else if(/too-many/.test(c)) $('#le').textContent='Too many attempts. Wait a few minutes and try again.';
+      else { $('#le').textContent='Incorrect username or password';
+        if(u===ADMIN_USER) $('#lsetup').innerHTML=`<div style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:10px;margin-top:6px;font-size:13px">First time using the online system? <button type="button" class="btn sm" style="margin-top:6px;width:100%" onclick="firstSetup()">Create the admin account with this password</button></div>`; } }
+  };
+}
+async function firstSetup(){ const pw=$('#lp').value; if(pw.length<6) return toast('Password must be at least 6 characters','err');
+  try{ await ADB.signUp(adminEmail(ADMIN_USER),pw); await startAdmin(); toast('Admin account created'); route(); }
+  catch(err){ const c=err&&err.code||''; $('#le').textContent = /already-in-use/.test(c)?'The admin account already exists — the password is wrong.':'Could not create the account: '+(err.message||c); $('#lsetup').innerHTML=''; } }
+async function logout(){ try{ await flushNow(); await ADB.signOut(); }catch(e){} try{ sessionStorage.clear(); }catch(e){} location.hash='#/'; location.reload(); }
+
+// =====================================================================
+// SHELL / NAV
+// =====================================================================
+const NAV = [['#/classes','👥','Students & Classes'],['#/marks','📝','Marks Schedule'],['#/print','🖨️','Print A3'],['#/progress','📈','E-Progress Report'],['#/reports','📊','Reports'],['#/access','🔑','Access'],['#/data','💾','Backup & Restore']];
+const TNAV = [['#/classes','👥','My Students'],['#/marks','📝','Marks Schedule'],['#/print','🖨️','Print A3'],['#/reports','📊','Reports']];
+function shell(){
+  if(!$('#view')) $('#app').innerHTML = `<div class="layout"><aside class="side" id="side"></aside><main class="main"><button class="btn out sm hamb" onclick="document.getElementById('side').classList.toggle('open')">☰ Menu</button><div id="view"></div></main></div>`;
+  const h = location.hash||'#/', p = P();
+  if(MODE==='teacher'){ const c=p.classes[0];
+    $('#side').innerHTML = `<div class="brand">${CAP} Marks Schedule</div>
+      <div class="pbox"><div class="hint">Class teacher access</div><div class="n">Class ${esc(c.name)}</div><div class="hint">${esc(p.name)}</div>${c.teacher?`<div class="hint">${esc(c.teacher)}</div>`:''}</div>
+      <nav class="nav">${TNAV.map(([u,i,t])=>`<a href="${u}" class="${h.startsWith(u)?'on':''}">${i} <span>${t}</span></a>`).join('')}</nav>
+      <div style="margin-top:auto;padding:10px 6px"><div id="sync" class="hint" style="margin-bottom:8px"></div><button class="btn out sm" style="width:100%" onclick="exitTeacher()">⎋ Exit</button></div>`;
+    setSync(); return;
+    return; }
+  $('#side').innerHTML = `<div class="brand">${CAP} Marks Schedule</div>
+    <nav class="nav"><a href="#/" class="${h==='#/'||h===''?'on':''}">🏫 <span>Setup Profile</span></a></nav>
+    ${p?`<div class="pbox"><div class="hint">Open marksheet</div><div class="n">${esc(p.name)}</div><div style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap">${usedSecs(p).map(k=>`<span class="badge">${esc(k)}</span>`).join('')}</div></div>
+      <nav class="nav">${NAV.map(([u,i,t])=>`<a href="${u}" class="${h.startsWith(u)?'on':''}">${i} <span>${t}</span></a>`).join('')}</nav>`
+      :`<div class="hint" style="padding:10px 10px">Create or open a marksheet in <b>Setup Profile</b> to enter marks.</div>`}
+    <div style="margin-top:auto;padding:10px 6px"><div id="sync" class="hint" style="margin-bottom:8px"></div><button class="btn out sm" style="width:100%" onclick="logout()">⎋ Logout</button></div>`;
+  setSync();
+}
+function needP(){
+  if(P()) return true;
+  view(`<div class="page narrow"><div class="card empty"><div style="font-size:16px;font-weight:600;color:var(--fg);margin-bottom:8px">No marksheet is open</div>Go to Setup Profile, create a marksheet for the term, then click it to open.<br><br><a class="btn" href="#/">Go to Setup Profile</a></div></div>`);
+  return false;
+}
+
+// =====================================================================
+// 1. SETUP PROFILE — school + marksheet profiles
+// =====================================================================
+function pageSetup(){
+  const sc = S.school; const list = [...S.profiles].sort((a,b)=>termOrder(b)-termOrder(a));
+  view(`<div class="page">
+    <h1>🏫 Setup Profile</h1><p class="sub">Set your school details once, then create a marksheet for each term.</p>
+    <div class="card"><h3>School Details</h3>
+      <div class="row" style="align-items:center;gap:20px">
+        <div style="width:96px;height:96px;border:2px dashed var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#f8fafc;flex:none">${sc.logo?`<img src="${sc.logo}" style="width:100%;height:100%;object-fit:contain">`:'<span style="font-size:30px">🏫</span>'}</div>
+        <div><input type="file" id="logoF" accept="image/*" hidden onchange="uploadLogo(this.files[0])">
+          <button class="btn out" onclick="logoF.click()">⬆ Upload Logo</button>
+          ${sc.logo?`<button class="btn ghost sm" onclick="S.school.logo='';save();pageSetup()">Remove</button>`:''}
+          <div class="hint" style="margin-top:4px">PNG/JPG, auto-resized to 300px.</div></div>
+        <div style="flex:1;min-width:260px"><label class="l">School Name</label>
+          <div class="row" style="flex-wrap:nowrap"><input class="inp" id="scName" value="${esc(sc.name)}" placeholder="e.g. Kg/Baduriya Central College - Mawanella"><button class="btn" onclick="S.school.name=document.getElementById('scName').value.trim();save();toast('School details saved')">Save</button></div></div>
+      </div></div>
+    <div class="card"><div class="row" style="justify-content:space-between;align-items:center;margin-bottom:16px"><div><h3 style="margin:0">Marksheets</h3><div class="hint">One marksheet per term. Each marksheet has its own Primary, Secondary, Senior Secondary and A.L subject lists. Click Open to enter marks.</div></div>
+      <button class="btn lg" onclick="openProfileForm()">＋ Create Marksheet</button></div>
+      ${!list.length?`<div class="empty" style="padding:30px">No marksheets yet. Click <b>Create Marksheet</b> to begin.</div>`:
+      `<div class="grid g3">${list.map(p=>`<div class="pcard ${p.id===S.activeId?'on':''}">
+        <div class="row" style="justify-content:space-between;align-items:center"><span class="badge dark">${esc(p.term)} Term ${esc(p.year)}</span>${p.id===S.activeId?'<span class="hint">● Open</span>':''}</div>
+        <div class="nm">${esc(p.name)}</div>
+        <div style="font-size:13px;line-height:1.6">${SECKEYS.map(k=>{ const n=secData(p,k).subjects.length, c=p.classes.filter(x=>secOf(x)===k).length; return `<div style="display:flex;justify-content:space-between;color:${n?'var(--fg)':'var(--muted)'}"><span>${esc(k)}</span><span class="hint">${n?`${n} subjects · ${c} class(es)`:'not used'}</span></div>`; }).join('')}</div>
+        <div class="row" style="margin-top:8px"><button class="btn sm" onclick="openProfile('${p.id}')">Open ›</button><button class="btn out sm" onclick="openProfileForm('${p.id}')">✎ Edit</button><button class="btn out sm" onclick="askDeleteProfile('${p.id}')">🗑</button></div></div>`).join('')}</div>`}
+    </div></div>`);
+}
+function uploadLogo(f){
+  if(!f) return; if(f.size>3*1024*1024) return toast('Logo must be under 3MB','err');
+  const r=new FileReader(); r.onload=()=>{ const im=new Image(); im.onload=()=>{ const c=document.createElement('canvas'); const k=Math.min(1,300/Math.max(im.width,im.height)); c.width=Math.round(im.width*k);c.height=Math.round(im.height*k); c.getContext('2d').drawImage(im,0,0,c.width,c.height); S.school.logo=c.toDataURL('image/png'); save(); toast('Logo uploaded'); pageSetup(); }; im.src=r.result; }; r.readAsDataURL(f);
+}
+function openProfile(id){ S.activeId=id; save(); location.hash='#/marks'; }
+function askDeleteProfile(id){
+  const p=S.profiles.find(x=>x.id===id);
+  modal(`<h2>Delete "${esc(p.name)}"?</h2><p class="hint" style="font-size:14px">${p.classes.length} class(es). All classes, students and marks in this marksheet will be permanently removed.</p>
+   <div class="foot"><button class="btn out" onclick="closeModal()">Cancel</button><button class="btn danger" onclick="S.profiles=S.profiles.filter(x=>x.id!=='${id}');if(S.activeId==='${id}')S.activeId=null;save();closeModal();toast('Marksheet deleted');route()">Delete</button></div>`,'smm');
+}
+
+// ---------- Create / edit marksheet form ----------
+let PF=null;
+function openProfileForm(id){
+  const p = id?S.profiles.find(x=>x.id===id):null;
+  const latest = k => [...S.profiles].sort((a,b)=>termOrder(b)-termOrder(a)).map(x=>secData(x,k)).find(d=>d.subjects.length&&d.grades);
+  const mk = k => { const d=p?secData(p,k):null; const subs=d?d.subjects.map(s=>({orig:s,name:s})):[]; const src=(d&&d.grades)?d:(latest(k)||{});
+    return {subjects:subs, divAll:d&&d.subjects.length?(d.div&&d.div.all?d.div.all:''):(DEFDIV[k]||''),
+      grades:normBands(src.grades).map(b=>({g:b.g,min:String(b.min)})), pass:String(src.pass??35)}; };
+  const yr = String(new Date().getFullYear());
+  PF = {id:id||null, year:p?p.year:(YEARS.includes(yr)?yr:'2026'), term:p?p.term:'1st', tab:p?(usedSecs(p)[0]||'Primary'):'Primary',
+        secs:Object.fromEntries(SECKEYS.map(k=>[k,mk(k)])), copyFrom:'', confirm:false, err:''};
+  drawProfileForm();
+}
+function drawProfileForm(focusNew){
+  const T=PF.tab, D=PF.secs[T];
+  const others = S.profiles.filter(p=>p.id!==PF.id && p.classes.length).sort((a,b)=>termOrder(b)-termOrder(a));
+  const count = k => PF.secs[k].subjects.filter(s=>s.name.trim()).length;
+  modal(`<h2>${PF.id?'Edit Marksheet':'Create Marksheet'}</h2>
+    <div class="grid" style="grid-template-columns:1fr 1fr;gap:12px">
+      <div><label class="l">Year</label><select class="inp" onchange="PF.year=this.value;pfName()">${YEARS.map(y=>`<option ${y===PF.year?'selected':''}>${y}</option>`).join('')}</select></div>
+      <div><label class="l">Term</label><select class="inp" onchange="PF.term=this.value;pfName()">${TERMS.map(t=>`<option value="${t}" ${t===PF.term?'selected':''}>${t} Term</option>`).join('')}</select></div>
+    </div>
+    <div><label class="l">Subjects — add each section's subjects separately</label>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px">${SECKEYS.map(k=>`<button class="btn ${k===T?'':'out'}" style="flex-direction:column;gap:0;padding:8px" onclick="PF.tab='${k}';drawProfileForm()"><span>${esc(k)}</span><span style="font-size:11px;opacity:.8;font-weight:400">Grades ${SECTIONS[k].from}–${SECTIONS[k].to} · ${count(k)?count(k)+' subjects':'not used'}</span></button>`).join('')}</div>
+      <div style="border:1px solid var(--border);border-radius:10px;padding:12px">
+        <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:8px"><b>${esc(SECTIONS[T].label)}</b>
+          ${SUGGEST[T].length?`<button class="btn ghost sm" onclick="pfSuggest()">↺ Add common ${esc(T)} subjects</button>`:''}</div>
+        ${D.subjects.length>1?`<div class="hint" style="margin-bottom:6px">This is the column order in the marks table, A3 sheet and Excel. Drag ⠿ or use ↑ ↓ to change it.</div>`:''}
+        <div id="pfList">${D.subjects.length?D.subjects.map((s,i)=>`<div class="subj" draggable="true" data-i="${i}"><span class="hd" title="Drag to reorder">⠿</span><span class="ix">${i+1}.</span><input class="inp" value="${esc(s.name)}" draggable="false" ondragstart="event.preventDefault();event.stopPropagation()" oninput="PF.secs[PF.tab].subjects[${i}].name=this.value;pfDiv()">
+          <button class="x" title="Move up" onclick="pfMove(${i},-1)" ${i===0?'disabled':''}>↑</button><button class="x" title="Move down" onclick="pfMove(${i},1)" ${i===D.subjects.length-1?'disabled':''}>↓</button><button class="x" title="Remove" onclick="PF.secs[PF.tab].subjects.splice(${i},1);PF.confirm=false;drawProfileForm()">✕</button></div>`).join(''):`<div class="hint" style="margin-bottom:8px">No ${esc(T)} subjects yet. Type a subject name below and press ＋ Add. Leave it empty if ${esc(T)} classes are not part of this term.</div>`}</div>
+        <div class="subj"><span class="ix">＋</span><input class="inp" id="pfNew" placeholder="Type ${esc(T)} subject name, e.g. Mathematics" onkeydown="if(event.key==='Enter'){event.preventDefault();pfAdd()}"><button class="btn" style="height:36px" onclick="pfAdd()">＋ Add</button></div>
+        <div style="margin-top:10px"><label class="l">${esc(T)} average = Total ÷</label>
+        <div class="row"><input class="inp" id="pfDivAll" type="number" min="1" style="width:110px" value="${D.divAll}" placeholder="Auto" oninput="PF.secs[PF.tab].divAll=this.value"><div class="hint" style="flex:1;min-width:200px">${DEFDIV[T]?`Standard for ${esc(T)}: ÷${DEFDIV[T]}. `:''}Leave empty (<b>Auto</b>) to divide by the number of subjects each class takes, or type a fixed number.</div></div></div>
+        <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px">
+          <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:6px"><b>${esc(T)} grade ranges</b>
+            <select class="inp" style="width:auto" onchange="if(this.value){pfPreset(this.value)}"><option value="">Load a preset…</option>${Object.keys(BAND_PRESETS).map(k=>`<option>${esc(k)}</option>`).join('')}</select></div>
+          <div class="hint" style="margin-bottom:8px">Type the grade letter and the lowest mark for that grade. The highest mark is worked out for you. The lowest grade must start at 0.</div>
+          <table class="dt" style="max-width:440px"><thead><tr><th style="width:90px">Grade</th><th style="width:110px">From</th><th style="width:90px">To</th><th style="width:44px"></th></tr></thead><tbody id="pfBands">${pfBandRows()}</tbody></table>
+          <div class="row" style="margin-top:8px;align-items:center"><button class="btn out sm" onclick="pfBandAdd()">＋ Add grade</button>
+            <span class="hint" style="margin-left:auto">Pass mark</span><input class="inp" type="number" min="0" max="100" style="width:80px" value="${esc(D.pass)}" oninput="PF.secs[PF.tab].pass=this.value"></div>
+          <div class="hint" style="margin-top:6px">Preview: <b id="pfBandPrev">${esc(pfBandPreview())}</b></div>
+        </div>
+      </div></div>
+    ${!PF.id&&others.length?`<div><label class="l">Copy classes & students from (optional)</label><select class="inp" onchange="PF.copyFrom=this.value"><option value="">— Start empty —</option>${others.map(o=>`<option value="${o.id}" ${o.id===PF.copyFrom?'selected':''}>${esc(o.name)} (${o.classes.length} classes)</option>`).join('')}</select><div class="hint" style="margin-top:4px">Copies class names, class teachers and student lists for the sections that have subjects. Marks start empty.</div></div>`:''}
+    <div style="background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:12px"><span class="hint">Marksheet name</span><div style="font-weight:700;font-size:16px" id="pfName">${esc(profName(PF.year,PF.term))}</div>
+      <div class="hint">${SECKEYS.map(k=>`${esc(k)}: ${count(k)||'—'}`).join(' · ')}</div></div>
+    ${PF.err?`<div class="err">${PF.err}</div>`:''}
+    <div class="foot"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn" onclick="pfSave()">${PF.confirm?'Confirm & Save':PF.id?'Save Changes':'Create'}</button></div>`,'md');
+  bindDrag('#pfList',(a,b)=>{ moveItem(PF.secs[PF.tab].subjects,a,b); drawProfileForm(); });
+  if(focusNew) setTimeout(()=>$('#pfNew')?.focus(),0);
+}
+function pfSortedBands(){ return PF.secs[PF.tab].grades.map((b,i)=>({...b,i,n:b.min===''?NaN:+b.min})).sort((a,b)=>(isNaN(b.n)?-1:b.n)-(isNaN(a.n)?-1:a.n)); }
+function pfBandRows(){ const L=pfSortedBands(); return L.map((b,k)=>{ const to=k===0?100:(isNaN(L[k-1].n)?'':L[k-1].n-1);
+  return `<tr><td><input value="${esc(b.g)}" maxlength="3" style="text-align:center;font-weight:700" oninput="PF.secs[PF.tab].grades[${b.i}].g=this.value;pfBandRefresh(false)"></td>
+  <td><input type="number" min="0" max="100" value="${esc(b.min)}" style="text-align:center" oninput="PF.secs[PF.tab].grades[${b.i}].min=this.value;pfBandRefresh(false)" onchange="pfBandRefresh(true)"></td>
+  <td class="p" style="text-align:center">${to}</td><td style="text-align:center"><button class="x" style="height:30px" onclick="PF.secs[PF.tab].grades.splice(${b.i},1);pfBandRefresh(true)">✕</button></td></tr>`; }).join(''); }
+function pfBandPreview(){ const L=pfSortedBands().filter(b=>b.g.trim()&&!isNaN(b.n)); return L.length?bandText(L.map(b=>({g:b.g.trim(),min:b.n})),' · '):'—'; }
+function pfBandRefresh(full){ if(full){ const t=$('#pfBands'); if(t) t.innerHTML=pfBandRows(); } const pv=$('#pfBandPrev'); if(pv) pv.textContent=pfBandPreview(); }
+function pfBandAdd(){ PF.secs[PF.tab].grades.push({g:'',min:''}); pfBandRefresh(true); const ins=document.querySelectorAll('#pfBands input'); }
+function pfPreset(k){ PF.secs[PF.tab].grades=BAND_PRESETS[k].map(b=>({g:b.g,min:String(b.min)})); drawProfileForm(); }
+function checkBands(sec){ const D=PF.secs[sec]; const L=D.grades.filter(b=>String(b.g).trim()||String(b.min).trim());
+  if(!L.length) return `Add at least one ${sec} grade.`;
+  if(L.some(b=>!String(b.g).trim())) return `Every ${sec} grade needs a letter.`;
+  if(L.some(b=>String(b.min).trim()===''||isNaN(+b.min)||+b.min<0||+b.min>100||!Number.isInteger(+b.min))) return `${sec} grade "From" marks must be whole numbers from 0 to 100.`;
+  const lt=L.map(b=>String(b.g).trim().toUpperCase()); if(new Set(lt).size!==lt.length) return `Two ${sec} grades use the same letter.`;
+  const mins=L.map(b=>+b.min); if(new Set(mins).size!==mins.length) return `Two ${sec} grades start at the same mark.`;
+  if(!mins.includes(0)) return `The lowest ${sec} grade must start at 0.`;
+  const ps=String(D.pass).trim(); if(ps===''||isNaN(+ps)||+ps<0||+ps>100) return `${sec} pass mark must be from 0 to 100.`;
+  return ''; }
+function pfName(){ const e=$('#pfName'); if(e) e.textContent=profName(PF.year,PF.term); }
+function pfDiv(){}
+function pfAdd(){ const e=$('#pfNew'); const v=e.value.trim(); if(!v) return e.focus(); const D=PF.secs[PF.tab];
+  if(D.subjects.some(s=>s.name.trim().toLowerCase()===v.toLowerCase())){ toast(`"${v}" is already in the ${PF.tab} list`,'err'); return; }
+  D.subjects.push({orig:null,name:v}); PF.err=''; drawProfileForm(true); }
+function pfSuggest(){ const D=PF.secs[PF.tab]; SUGGEST[PF.tab].forEach(s=>{ if(!D.subjects.some(x=>x.name.trim().toLowerCase()===s.toLowerCase())) D.subjects.push({orig:null,name:s}); }); drawProfileForm(); }
+function pfMove(i,d){ const L=PF.secs[PF.tab].subjects, j=i+d; if(j<0||j>=L.length) return; [L[i],L[j]]=[L[j],L[i]]; drawProfileForm(); }
+const moveItem = (L,from,to) => { if(from===to) return; const [x]=L.splice(from,1); L.splice(to,0,x); };
+function bindDrag(sel,onMove){ const box=$(sel); if(!box) return; let from=null;
+  box.querySelectorAll('[draggable="true"][data-i]').forEach(row=>{
+    row.addEventListener('dragstart',e=>{ from=+row.dataset.i; row.classList.add('drag'); e.dataTransfer.effectAllowed='move'; try{e.dataTransfer.setData('text/plain',String(from));}catch(_){} });
+    row.addEventListener('dragend',()=>{ row.classList.remove('drag'); box.querySelectorAll('.over').forEach(r=>r.classList.remove('over')); });
+    row.addEventListener('dragover',e=>{ e.preventDefault(); box.querySelectorAll('.over').forEach(r=>r.classList.remove('over')); row.classList.add('over'); });
+    row.addEventListener('drop',e=>{ e.preventDefault(); const to=+row.dataset.i; if(from!==null&&!isNaN(to)) onMove(from,to); from=null; });
+  }); }
+// "Subject order" window — used from Students & Classes and the Marks Schedule preview
+let OM=null;
+function openOrder(sec,after){ OM={sec,after,list:[...secData(P(),sec).subjects]}; drawOrder(); }
+function drawOrder(){ const L=OM.list;
+  modal(`<h2>Subject order — ${esc(OM.sec)}</h2><div class="hint">Drag ⠿ or use ↑ ↓. This sets the column order in the marks table, A3 sheet and Excel for every ${esc(OM.sec)} class in ${esc(P().name)}. Marks are not changed.</div>
+    <div id="omList">${L.map((x,i)=>`<div class="subj" draggable="true" data-i="${i}"><span class="hd" title="Drag to reorder">⠿</span><span class="ix">${i+1}.</span><div class="ordname">${esc(x)}</div>
+      <button class="x" onclick="omMove(${i},-1)" ${i===0?'disabled':''}>↑</button><button class="x" onclick="omMove(${i},1)" ${i===L.length-1?'disabled':''}>↓</button></div>`).join('')}</div>
+    <div class="foot"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn" onclick="omSave()">Save order</button></div>`,'smm');
+  bindDrag('#omList',(a,b)=>{ moveItem(OM.list,a,b); drawOrder(); }); }
+function omMove(i,d){ const j=i+d; if(j<0||j>=OM.list.length) return; moveItem(OM.list,i,j); drawOrder(); }
+function omSave(){ P().sections[OM.sec].subjects=OM.list; save(); closeModal(); toast(`${OM.sec} subject order saved`); if(OM.after) OM.after(); }
+function pfSave(){
+  const err = (m,tab) => { PF.err=m; if(tab) PF.tab=tab; drawProfileForm(); };
+  const subs={}, divs={}; let total=0;
+  for(const k of SECKEYS){
+    const D=PF.secs[k]; subs[k]=D.subjects.map(s=>({...s,name:s.name.trim()})).filter(s=>s.name);
+    const low=subs[k].map(s=>s.name.toLowerCase()); if(new Set(low).size!==low.length) return err(`Two ${k} subjects have the same name.`,k);
+    total+=subs[k].length;
+    if(subs[k].length){ const e=checkBands(k); if(e) return err(e,k); }
+    divs[k]={all:(+D.divAll>0?+D.divAll:null)};
+  }
+  if(!total) return err('Add subjects to at least one section (Primary, Secondary, Senior Secondary or A.L).');
+  if(S.profiles.some(p=>p.id!==PF.id && p.year===PF.year && p.term===PF.term)) return err(`A marksheet for ${PF.term} Term ${PF.year} already exists.`);
+  const sections = Object.fromEntries(SECKEYS.filter(k=>subs[k].length).map(k=>[k,{subjects:subs[k].map(s=>s.name),div:divs[k],
+    grades:normBands(PF.secs[k].grades.filter(b=>String(b.g).trim()).map(b=>({g:String(b.g).trim(),min:+b.min}))), pass:+PF.secs[k].pass}]));
+  if(PF.id){
+    const p = S.profiles.find(x=>x.id===PF.id);
+    for(const k of SECKEYS) if(!subs[k].length && p.classes.some(c=>secOf(c)===k)) return err(`This marksheet has ${k} classes — keep at least one ${k} subject.`,k);
+    const removed={}, ren={}; let n=0;
+    SECKEYS.forEach(k=>{ removed[k]=secData(p,k).subjects.filter(o=>!subs[k].some(s=>s.orig===o)); ren[k]={}; subs[k].forEach(s=>{ if(s.orig && s.orig!==s.name) ren[k][s.orig]=s.name; }); });
+    p.classes.forEach(c=>{ const k=secOf(c); if(!k) return; Object.values(c.marks).forEach(m=>removed[k].forEach(r=>{ if(m[r]!==undefined) n++; })); });
+    if(n && !PF.confirm){ PF.confirm=true; return err(`Removing ${SECKEYS.filter(k=>removed[k].length).map(k=>`${k}: ${removed[k].join(', ')}`).join(' · ')} will delete ${n} entered mark(s). Click "Confirm & Save" to continue.`); }
+    p.classes.forEach(c=>{ const k=secOf(c); if(!k) return; const R=removed[k], M=ren[k];
+      Object.keys(c.marks).forEach(sid=>{ const nm={}; Object.entries(c.marks[sid]).forEach(([a,v])=>{ if(R.includes(a)) return; nm[M[a]||a]=v; }); c.marks[sid]=nm; });
+      const st={}; Object.entries(c.subjectTeachers||{}).forEach(([a,v])=>{ if(!R.includes(a)) st[M[a]||a]=v; }); c.subjectTeachers=st;
+      if(c.subjects) c.subjects = c.subjects.filter(a=>!R.includes(a)).map(a=>M[a]||a);
+    });
+    Object.assign(p,{year:PF.year,term:PF.term,name:profName(PF.year,PF.term),sections});
+    save(); closeModal(); toast('Marksheet updated'); route();
+  } else {
+    let classes=[];
+    if(PF.copyFrom){ const src=S.profiles.find(x=>x.id===PF.copyFrom);
+      classes = src.classes.filter(c=>sections[secOf(c)]).map(c=>{ const keep=sections[secOf(c)].subjects; const cs=c.subjects?c.subjects.filter(x=>keep.includes(x)):null;
+        return {id:uid(),name:c.name,teacher:c.teacher,students:c.students.map(s=>({...s,id:uid()})),marks:{},subjectTeachers:{...(c.subjectTeachers||{})},subjects:cs&&cs.length?cs:null}; }); }
+    const p = {id:uid(),year:PF.year,term:PF.term,name:profName(PF.year,PF.term),sections,classes:sortClasses(classes),created:Date.now()};
+    S.profiles.push(p); save(); closeModal(); toast(`"${p.name}" created`); pageSetup();
+  }
+}
+
+// =====================================================================
+// 2. STUDENTS & CLASSES
+// =====================================================================
+let ED = null;
+function pageClasses(){
+  if(!needP()) return; const p=P(); const secs=usedSecs(p);
+  const card = c=>`<div class="card" style="margin:0;border-radius:16px"><div style="font-size:20px;font-weight:700">${esc(c.name)}</div>
+      ${c.teacher?`<div style="color:var(--muted)">Teacher: ${esc(c.teacher)}</div>`:''}<div class="hint">${c.students.length} students · ${subjectsFor(c).length} subjects · average ÷ ${divisorFor(c)}</div>
+      <div class="row" style="margin-top:14px"><button class="btn out sm" onclick="openClass('${c.id}')">✎ ${MODE==='teacher'?'Edit Students':'Edit'}</button>${MODE==='teacher'?'':`<button class="btn out sm" onclick="askDelete('${c.id}')">🗑 Delete</button>`}</div></div>`;
+  view(`<div class="page">
+    <div class="row" style="justify-content:space-between;margin-bottom:20px"><div><h1>👥 ${MODE==='teacher'?'My Students':'Students & Classes'}</h1><p class="sub" style="margin:0">${esc(p.name)} · sections in use: ${secs.map(esc).join(', ')||'none'}</p></div>
+    ${MODE==='teacher'?'':`<button class="btn" onclick="openClass()">＋ Add Class</button>`}</div>
+    ${!p.classes.length?`<div class="card empty">No classes yet. Click "Add Class" to begin.</div>`:
+      SECKEYS.map(k=>{ const list=sortClasses(p.classes.filter(c=>secOf(c)===k)); if(!list.length) return '';
+        return `<div class="row" style="justify-content:space-between;align-items:center;margin:22px 0 10px"><h3 style="margin:0">${esc(SECTIONS[k].label)}</h3>${MODE==='teacher'?'':`<button class="btn out sm" onclick="openOrder('${k}',pageClasses)">⇅ Subject order</button>`}</div><div class="grid g3">${list.map(card).join('')}</div>`; }).join('')}
+  </div>`);
+}
+function blankRows(from=0){ return Array.from({length:Math.max(0,ROWS-from)},(_,i)=>({id:uid(),no:from+i+1,admissionNo:'',name:''})); }
+function openClass(id){
+  const c = id?getClass(id):null; const sec=c?secOf(c):null; const all=secData(P(),sec).subjects;
+  ED = {id:id||null, step:1, name:c?c.name:'', teacher:c?(c.teacher||''):'', sec, subs:c&&c.subjects&&c.subjects.length?all.filter(s=>c.subjects.includes(s)):[...all],
+        rows:c?[...c.students.map(s=>({...s})),...blankRows(c.students.length)]:blankRows()};
+  if(MODE==='teacher') ED.step=2;
+  drawClassModal();
+}
+function classSecHTML(){
+  const p=P(), sec=secOf(ED.name);
+  if(!ED.name.trim()) return `<div class="hint">Type the class name — the section is picked from the grade number (1–5 Primary, 6–9 Secondary, 10–11 Senior Secondary, 12–13 A.L).</div>`;
+  if(!sec) return `<div class="err">The class name must start with a grade number from 1 to 13 (e.g. 4A, 8B, 12 Bio).</div>`;
+  const subs=secData(p,sec).subjects;
+  if(!subs.length) return `<div class="err">${esc(p.name)} has no ${esc(sec)} subjects yet. Add them in Setup Profile → Edit marksheet → ${esc(sec)}.</div>`;
+  return `<div class="row" style="justify-content:space-between;align-items:center;margin-bottom:6px"><label class="l" style="margin:0">${esc(sec)} subjects taken by this class</label><span><button class="btn ghost sm" onclick="document.querySelectorAll('#cSubs input').forEach(i=>i.checked=true)">All</button><button class="btn ghost sm" onclick="document.querySelectorAll('#cSubs input').forEach(i=>i.checked=false)">None</button></span></div>
+    <div class="checks" id="cSubs">${subs.map(s=>`<label><input type="checkbox" value="${esc(s)}" ${ED.subs.includes(s)?'checked':''}> ${esc(s)}</label>`).join('')}</div>`;
+}
+function classNameInput(v){ ED.name=v; const s=secOf(v); if(s!==ED.sec){ ED.sec=s; ED.subs=[...secData(P(),s).subjects]; } else { ED.subs=[...document.querySelectorAll('#cSubs input:checked')].map(i=>i.value); } $('#cSecBox').innerHTML=classSecHTML(); }
+function drawClassModal(){
+  if(ED.step===1){
+    modal(`<h2>${ED.id?'Edit':'New'} Class — Step 1 of 2</h2>
+      <div><label class="l">Name of Class *</label><input class="inp" id="cName" value="${esc(ED.name)}" placeholder="e.g. 4A, 8B, 11 Commerce, 12 Bio" oninput="classNameInput(this.value)"></div>
+      <div><label class="l">Class Teacher Name (optional)</label><input class="inp" id="cTeach" value="${esc(ED.teacher)}" placeholder="e.g. Mrs. M.A.F. Risna"></div>
+      <div id="cSecBox">${classSecHTML()}</div>
+      <div class="foot"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn" onclick="classNext()">Next</button></div>`,'md');
+    setTimeout(()=>$('#cName').focus(),0);
+  } else {
+    modal(`<h2>${ED.id?'Edit':'New'} Class — Step 2 of 2 · ${esc(ED.name)} (${esc(ED.sec)})</h2>
+      <div class="hint">Tip: Copy admission numbers and names from Excel and paste directly into any cell.</div>
+      <div class="scroll" style="flex:1"><table class="dt"><thead><tr><th style="width:50px">No</th><th style="width:200px">Admission No</th><th>Student Name</th></tr></thead>
+      <tbody id="rosterBody">${ED.rows.map((r,i)=>`<tr><td class="c">${i+1}</td><td><input data-r="${i}" data-c="0" value="${esc(r.admissionNo)}"></td><td><input data-r="${i}" data-c="1" value="${esc(r.name)}"></td></tr>`).join('')}</tbody></table></div>
+      <div class="foot">${MODE==='teacher'?`<button class="btn ghost" onclick="closeModal()">Cancel</button>`:`<button class="btn ghost" onclick="ED.step=1;drawClassModal()">Back</button>`}<button class="btn" onclick="classSave()">${MODE==='teacher'?'Save Students':'Save Class'}</button></div>`);
+    const tb = $('#rosterBody');
+    tb.addEventListener('input',e=>{ const t=e.target; if(!t.dataset.r) return; ED.rows[+t.dataset.r][t.dataset.c==='0'?'admissionNo':'name']=t.value; });
+    tb.addEventListener('paste',e=>{
+      const t=e.target; if(!t.dataset.r) return; const txt=e.clipboardData.getData('text');
+      if(!txt.includes('\t')&&!txt.includes('\n')) return; e.preventDefault();
+      const lines = txt.replace(/\r/g,'').split('\n'); if(lines[lines.length-1]==='') lines.pop();
+      const r0=+t.dataset.r, c0=+t.dataset.c;
+      lines.forEach((ln,i)=>{ const r=r0+i; if(r>=ED.rows.length) ED.rows.push({id:uid(),admissionNo:'',name:''}); ln.split('\t').forEach((v,j)=>{ const c=c0+j; if(c===0) ED.rows[r].admissionNo=v.trim(); else if(c===1) ED.rows[r].name=v.trim(); }); });
+      drawClassModal(); toast('Pasted from clipboard');
+    });
+  }
+}
+function classNext(){
+  const p=P();
+  ED.name=$('#cName').value.trim(); ED.teacher=$('#cTeach').value.trim(); ED.sec=secOf(ED.name);
+  if(!ED.name) return toast('Class name is required','err');
+  if(!ED.sec) return toast('The class name must start with a grade number from 1 to 13','err');
+  if(!secData(p,ED.sec).subjects.length) return toast(`This marksheet has no ${ED.sec} subjects. Add them in Setup Profile first.`,'err');
+  ED.subs=[...document.querySelectorAll('#cSubs input:checked')].map(i=>i.value);
+  if(!ED.subs.length) return toast('Tick at least one subject','err');
+  if(p.classes.some(c=>c.id!==ED.id && c.name.trim().toLowerCase()===ED.name.toLowerCase())) return toast(`Class "${ED.name}" already exists`,'err');
+  ED.step=2; drawClassModal();
+}
+function classSave(){
+  const p=P(); const all=secData(p,ED.sec).subjects;
+  const students = ED.rows.filter(r=>r.admissionNo.trim()||r.name.trim()).map((r,i)=>({id:r.id,no:i+1,admissionNo:r.admissionNo.trim(),name:r.name.trim()}));
+  const subs = ED.subs.length===all.length ? null : ED.subs;
+  if(ED.id){ const c=getClass(ED.id); Object.assign(c,{name:ED.name,teacher:ED.teacher,students,subjects:subs}); toast('Class updated'); }
+  else { p.classes.push({id:uid(),name:ED.name,teacher:ED.teacher,students,marks:{},subjectTeachers:{},subjects:subs}); toast(`Class ${ED.name} created`); }
+  p.classes = sortClasses(p.classes); save(); closeModal(); pageClasses();
+}
+function askDelete(id){
+  modal(`<h2>Delete this class?</h2><p class="hint" style="font-size:14px">All students and marks in this class will be permanently removed.</p>
+   <div class="foot"><button class="btn out" onclick="closeModal()">Cancel</button><button class="btn danger" onclick="P().classes=P().classes.filter(c=>c.id!=='${id}');save();closeModal();toast('Class deleted');pageClasses()">Delete</button></div>`,'smm');
+}
+
+// =====================================================================
+// 3. MARKS SCHEDULE
+// =====================================================================
+let MK = {mode:'list',preview:false,cid:null,sub:null};
+function pageMarks(){
+  if(!needP()) return; const p=P();
+  const list = sortClasses(p.classes); const c = MK.cid?getClass(MK.cid):null;
+  let body='';
+  if(MK.mode==='list'){
+    body = `<div class="hint" style="margin-bottom:12px;font-size:13px">${MK.preview?'Choose a class to preview its A3 marks schedule.':'Choose a class to enter subject marks.'}</div>`+classTiles(list,'mkPick');
+  } else if(MK.mode==='class' && c){
+    body = `<div class="row" style="justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-weight:500">Class: <b>${esc(c.name)}</b> — choose a subject</div>${MODE==='teacher'?'':`<button class="btn out sm" onclick="openOrder('${secOf(c)}',pageMarks)">⇅ Subject order</button>`}</div><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px">`+
+      subjectsFor(c).map((s,i)=>{ const n=c.students.filter(st=>c.marks[st.id]?.[s]!==undefined).length;
+        return `<button class="tile" style="padding:14px;border-width:1px;border-radius:12px" onclick="MK.sub=subjectsFor(getClass(MK.cid))[${i}];MK.mode='subject';pageMarks()"><div style="font-weight:600">📖 ${esc(s)}</div><div class="small">${n}/${c.students.length} entered</div></button>`; }).join('')+`</div>`;
+  } else if(MK.mode==='subject' && c){
+    const s = MK.sub; useBands(c);
+    body = `<div class="card"><div class="row" style="justify-content:space-between;margin-bottom:14px"><div><div style="font-size:18px;font-weight:700">${esc(c.name)} — ${esc(s)}</div>
+      <div class="hint">Grades: ${bandText(GB,' · ')} · type "Ab" for absent · paste a column from Excel · Enter/↓ moves down</div></div>
+      <div class="row" style="align-items:center"><span>Subject Teacher:</span><input class="inp" style="width:220px" id="subT" value="${esc(c.subjectTeachers?.[s]||'')}" placeholder="Teacher name"></div></div>
+      <div class="scroll"><table class="dt"><thead><tr><th style="width:50px">No</th><th style="width:120px">Adm. No</th><th>Student Name</th><th style="width:130px">Mark (0-100)</th><th style="width:80px">Grade</th></tr></thead><tbody id="mkBody">`+
+      c.students.map((st,i)=>{ const v=c.marks[st.id]?.[s]; return `<tr><td class="c">${i+1}</td><td class="p">${esc(st.admissionNo)}</td><td class="p">${esc(st.name)}</td>
+        <td><input data-i="${i}" style="text-align:center" value="${v===-1?'Ab':v??''}" placeholder="mark or Ab"></td><td class="p" style="text-align:center;font-weight:700" id="g${i}">${cellText(v)||'-'}</td></tr>`; }).join('')+
+      `</tbody></table></div><div class="foot" style="margin-top:14px"><button class="btn ghost" onclick="mkSaveT();MK.mode='class';pageMarks()">Back</button><button class="btn" onclick="mkSaveT();toast('Marks saved');MK.mode='class';pageMarks()">Save</button></div></div>`;
+  } else if(MK.mode==='preview' && c){
+    body = `<div class="row" style="justify-content:space-between;align-items:center;margin-bottom:12px"><div class="hint">A3 landscape · margins: left 0.8", top/right/bottom 0.25" · black print</div>
+      <div class="row">${MODE==='teacher'?'':`<button class="btn out" onclick="openOrder('${secOf(c)}',pageMarks)">⇅ Subject order</button>`}<button class="btn" onclick="exportExcel(['${c.id}'])">⬇ Excel (.xlsx)</button><button class="btn" onclick="printSheets(['${c.id}'])">⬇ PDF (A3)</button></div></div>
+      <div class="a3wrap" id="a3wrap">${a3HTML(c)}</div>`;
+  }
+  view(`<div class="page" style="max-width:1500px">
+    <div class="row" style="justify-content:space-between;margin-bottom:16px"><div><h1>📝 Marks Schedule</h1><p class="sub" style="margin:0">${esc(p.name)} — enter subject marks per class, then preview and export.</p></div>
+    <button class="btn lg ${MK.preview?'':'sec'}" onclick="MK={mode:'list',preview:true,cid:null,sub:null};pageMarks()">👁 Preview</button></div>
+    ${MK.mode!=='list'?`<button class="btn ghost sm" style="margin-bottom:12px" onclick="MK={mode:'list',preview:false,cid:null,sub:null};pageMarks()">← Back to classes</button>`:''}
+    ${body}</div>`);
+  if(MK.mode==='subject') bindMarkInputs(c, MK.sub);
+  if(MK.mode==='preview') fitPreview();
+}
+function mkPick(id){ MK.cid=id; MK.mode = MK.preview?'preview':'class'; pageMarks(); }
+function mkSaveT(){ const c=getClass(MK.cid); const el=$('#subT'); if(el){ c.subjectTeachers=c.subjectTeachers||{}; c.subjectTeachers[MK.sub]=el.value.trim(); save(); } }
+function parseMark(raw){ const a=String(raw).trim(); if(a==='') return null; if(/^a$|^ab$/i.test(a)) return -1; const n=Number(a); return (isNaN(n)||n<0||n>100)?undefined:n; }
+function bindMarkInputs(c, sub){
+  const tb=$('#mkBody');
+  tb.addEventListener('input',e=>{ const t=e.target; if(t.dataset.i===undefined) return; useBands(c); const i=+t.dataset.i; const v=parseMark(t.value);
+    t.style.color = v===undefined?'var(--danger)':''; if(v===undefined) return; setMark(c.id,c.students[i].id,sub,v); $('#g'+i).textContent=cellText(v)||'-'; });
+  tb.addEventListener('keydown',e=>{ const i=+e.target.dataset.i; if(e.key==='Enter'||e.key==='ArrowDown'){ const n=tb.querySelector(`input[data-i="${i+1}"]`); if(n){e.preventDefault();n.focus();n.select();} } if(e.key==='ArrowUp'){ const n=tb.querySelector(`input[data-i="${i-1}"]`); if(n){e.preventDefault();n.focus();n.select();} } });
+  tb.addEventListener('paste',e=>{ const t=e.target; if(t.dataset.i===undefined) return; const txt=e.clipboardData.getData('text');
+    if(!/[\n\t,;]/.test(txt.trim()) && txt.trim().split(/\s+/).length<=1) return; e.preventDefault();
+    const parts=txt.replace(/\r/g,'').split(/[\n\t,;]+/).map(x=>x.trim()); if(parts[parts.length-1]==='') parts.pop();
+    parts.forEach((p,k)=>{ const st=c.students[+t.dataset.i+k]; if(!st) return; const v=parseMark(p); if(v!==undefined) setMark(c.id,st.id,sub,v); });
+    toast(`Pasted ${parts.length} marks`); pageMarks(); });
+}
+
+// ---------- Schedule computation (same method as before) ----------
+function computeSchedule(cls, prof=P()){
+  useBands(cls,prof);
+  const c = {...cls, students:filled(cls)}; const subs = subjectsFor(cls,prof); const div = divisorFor(cls,prof);
+  const used = {}; subs.forEach(s=>used[s]=c.students.some(st=>isMark(c.marks[st.id]?.[s])));
+  let rows = c.students.map(st=>{ const marks=subs.map(s=>c.marks[st.id]?.[s]); const ok=marks.filter(isMark); const total=ok.reduce((a,b)=>a+b,0);
+    const counts=zeroCounts(); ok.forEach(m=>counts[grade(m)]++); return {s:st,marks,total,avg:total/div,counts}; });
+  const rk = rankMap(rows); rows = rows.map(r=>({...r,rank:rk.get(r.s.id)}));
+  const subStats = subs.map(s=>{ const ms=c.students.map(st=>c.marks[st.id]?.[s]).filter(isMark); const g=zeroCounts(); ms.forEach(m=>g[grade(m)]++);
+    let hi=-1,hs=''; c.students.forEach(st=>{ const v=c.marks[st.id]?.[s]; if(isMark(v)&&v>hi){hi=v;hs=st.name;} });
+    return {sub:s,...g,n:ms.length,avg:ms.length?ms.reduce((a,b)=>a+b,0)/ms.length:0,passPct:ms.length?ms.filter(m=>m>=PASS).length/ms.length*100:0,
+      above40:ms.filter(m=>m>=40).length,below40:ms.filter(m=>m<40).length,hi:hi>=0?hi:null,hiStudent:hs,teacher:c.subjectTeachers?.[s]||'',used:used[s]}; });
+  return {c,subs,div,used,rows,subStats};
+}
+
+// ---------- A3 schedule (print-ready) ----------
+function a3HTML(cls, prof=P()){
+  const {c,subs,div,rows,subStats} = computeSchedule(cls,prof); const sc=S.school;
+  const N = Math.max(ROWS, rows.length), nb = GL().length, ns = subs.length;
+  const tableH = 283 - 31 - 2.2 - 2 - 13 - 1.5;      // mm available for the body (everything is sized to stay on ONE A3 page)
+  const headH = 24, rowH = Math.min(4.6,(tableH-headH)/N);
+  const mFont = Math.min(rowH<3.2?6.2:rowH<3.7?6.9:7.6, ns>22?6.2:ns>18?6.8:7.6);
+  const keyH = 12, sideRows = 2*(ns+2) + 5;
+  const sRowH = Math.min(rowH, (tableH - keyH - 3*2.4) / sideRows);
+  const sFont = sRowH<2.9?5.6:sRowH<3.3?6.2:sRowH<3.8?6.8:7.4;
+  const present = rows.filter(r=>r.marks.some(isMark));
+  const clsAvg = present.length ? present.reduce((a,r)=>a+r.avg,0)/present.length : null;
+  const passRate = present.length ? present.filter(r=>r.avg>=PASS).length/present.length*100 : null;
+  const topTotal = present.length ? Math.max(...present.map(r=>r.total)) : null;
+  const sideW = 98 + Math.max(0,nb-5)*5;
+  let h = `<div class="a3"><div class="a3-in">
+   <div class="hdr"><div class="lg">${sc.logo?`<img src="${sc.logo}" alt="">`:''}</div>
+     <div class="ctr"><div class="k1">MARKS SCHEDULE</div><div class="k2">${esc(sc.name||'School Name')}</div>
+       <div class="k3">${esc(secOf(cls)||'')} Section</div><div class="k4">${esc(prof.term)} Term — ${esc(prof.year)}</div></div>
+     <table class="info"><tr><th>Class</th><td>${esc(c.name)}</td></tr><tr><th>Class Teacher</th><td>${esc(c.teacher||'')}</td></tr>
+       <tr><th>No. of Students</th><td>${c.students.length}</td></tr><tr><th>Average</th><td>Total ÷ ${div}</td></tr></table></div>
+   <div class="bd" style="height:${tableH}mm">
+    <table class="mt" style="width:${392-sideW-3}mm;font-size:${mFont}pt"><colgroup><col style="width:6.5mm"><col style="width:12.5mm"><col style="width:44mm">${subs.map(()=>'<col>').join('')}<col style="width:10.5mm"><col style="width:9.5mm"><col style="width:8.5mm">${GL().map(()=>'<col style="width:5.6mm">').join('')}</colgroup>
+    <thead><tr style="height:${headH}mm"><th>No</th><th>Adm.<br>No</th><th style="text-align:left;padding-left:1.2mm">Name of Student</th>`+
+    subs.map(s=>`<th class="v"><div>${esc(s)}</div></th>`).join('')+`<th class="v gl"><div>Total</div></th><th class="v"><div>Average</div></th><th class="v"><div>Rank</div></th>${GL().map((g,i)=>`<th${i===0?' class="gl"':''}>${g}</th>`).join('')}</tr></thead><tbody>`;
+  for(let i=0;i<N;i++){
+    const r=rows[i]; const f5 = (i+1)%5===0 ? ' class="f5"' : '';
+    if(r) h+=`<tr${f5} style="height:${rowH}mm"><td>${i+1}</td><td>${esc(r.s.admissionNo)}</td><td class="nm">${esc(r.s.name)}</td>`+
+      r.marks.map(m=>`<td>${cellText(m)}</td>`).join('')+`<td class="b gl">${r.total||''}</td><td>${r.avg?r.avg.toFixed(1):''}</td><td class="b">${r.rank||''}</td>${GL().map((g,k)=>`<td${k===0?' class="gl"':''}>${r.counts[g]||''}</td>`).join('')}</tr>`;
+    else h+=`<tr${f5} style="height:${rowH}mm"><td>${i+1}</td><td></td><td></td>${subs.map(()=>'<td></td>').join('')}<td class="gl"></td><td></td><td></td>${GL().map((g,k)=>`<td${k===0?' class="gl"':''}></td>`).join('')}</tr>`;
+  }
+  const sr = `style="height:${sRowH}mm"`;
+  h += `</tbody></table>
+    <div class="sd" style="width:${sideW}mm;font-size:${sFont}pt">
+     <table class="st" style="font-size:${sFont}pt"><colgroup><col style="width:25mm">${GL().map(()=>'<col>').join('')}<col style="width:12mm"><col style="width:10mm"><col style="width:10mm"></colgroup>
+      <thead><tr ${sr}><th class="tt" colspan="${nb+4}">Subject Analysis</th></tr><tr ${sr}><th style="text-align:left">Subject</th>${GL().map(g=>`<th>${g}</th>`).join('')}<th>Pass %</th><th>≥ 40</th><th>&lt; 40</th></tr></thead><tbody>`+
+      subStats.map(x=>`<tr ${sr}><td class="l">${esc(x.sub)}</td>${GL().map(g=>`<td>${x[g]||''}</td>`).join('')}<td>${x.used?x.passPct.toFixed(0)+'%':''}</td><td>${x.used?x.above40:''}</td><td>${x.used?x.below40:''}</td></tr>`).join('')+`</tbody></table>
+     <table class="st" style="font-size:${sFont}pt"><colgroup><col style="width:25mm"><col style="width:10mm"><col><col style="width:27mm"></colgroup>
+      <thead><tr ${sr}><th class="tt" colspan="4">Highest Marks &amp; Subject Teachers</th></tr><tr ${sr}><th style="text-align:left">Subject</th><th>Mark</th><th style="text-align:left">Student</th><th style="text-align:left">Subject Teacher</th></tr></thead><tbody>`+
+      subStats.map(x=>`<tr ${sr}><td class="l">${esc(x.sub)}</td><td><b>${x.hi??''}</b></td><td class="l">${esc(x.hiStudent)}</td><td class="l">${esc(x.teacher)}</td></tr>`).join('')+`</tbody></table>
+     <table class="st" style="font-size:${sFont}pt"><colgroup><col><col style="width:22mm"></colgroup><thead><tr ${sr}><th class="tt" colspan="2">Class Summary</th></tr></thead><tbody>
+      <tr ${sr}><td class="l">Students sat</td><td><b>${present.length}</b> / ${c.students.length}</td></tr>
+      <tr ${sr}><td class="l">Class average</td><td><b>${clsAvg!=null?clsAvg.toFixed(1):''}</b></td></tr>
+      <tr ${sr}><td class="l">Pass rate (average ≥ ${PASS})</td><td><b>${passRate!=null?passRate.toFixed(0)+'%':''}</b></td></tr>
+      <tr ${sr}><td class="l">Highest total</td><td><b>${topTotal??''}</b></td></tr></tbody></table>
+     <div class="key" style="font-size:${sFont}pt"><b>Grade key:</b> ${bandText(GB,' &nbsp; ')} &nbsp; Ab = Absent<br>Marks are shown as <b>mark–grade</b> (e.g. 72-${esc(grade(72))}). Pass % = marks of ${PASS} and above.</div>
+    </div></div>
+   <div class="ft"><div><div class="ln">Class Teacher</div><div class="nmx">${esc(c.teacher||'')}</div></div><div><div class="ln">Sectional Head</div><div class="nmx"></div></div><div><div class="ln">Principal</div><div class="nmx"></div></div></div>
+  </div></div>`;
+  return h;
+}
+function fitA3(root){ // shrink only if content is larger than the page (e.g. more than 52 students)
+  root.querySelectorAll('.a3').forEach(a=>{ const inn=a.querySelector('.a3-in'); inn.style.transform='none'; inn.style.width='100%'; inn.style.height='100%';
+    const kx=a.clientWidth/Math.max(a.clientWidth,inn.scrollWidth), ky=a.clientHeight/Math.max(a.clientHeight,inn.scrollHeight), k=Math.min(kx,ky);
+    if(k<0.999){ inn.style.transform=`scale(${k})`; inn.style.width=(100/k)+'%'; inn.style.height=(100/k)+'%'; } });
+}
+function fitPreview(){ const w=$('#a3wrap'); if(!w) return; w.style.zoom=''; fitA3(w); const sheet=w.querySelector('.a3'); const k=Math.min(1,(w.clientWidth-30)/sheet.offsetWidth); w.style.zoom=k; }
+window.addEventListener('resize',()=>{ if($('#a3wrap')) fitPreview(); });
+
+function printSheets(ids){
+  const pr=$('#printroot'); pr.innerHTML=ids.map(id=>a3HTML(getClass(id))).join('');
+  pr.style.display='block'; fitA3(pr); pr.style.display='';
+  document.body.classList.add('printing');
+  setTimeout(()=>{ window.print(); setTimeout(()=>{document.body.classList.remove('printing');pr.innerHTML='';},400); },150);
+}
+
+// =====================================================================
+// EXCEL (.xlsx) WRITER — real workbook with formulas, A3 page setup
+// =====================================================================
+const XL = (()=>{
+  const enc = new TextEncoder();
+  const crcT = (()=>{ const t=new Uint32Array(256); for(let n=0;n<256;n++){ let c=n; for(let k=0;k<8;k++) c = c&1 ? 0xEDB88320^(c>>>1) : c>>>1; t[n]=c>>>0; } return t; })();
+  const crc32 = b => { let c=0xFFFFFFFF; for(let i=0;i<b.length;i++) c=crcT[(c^b[i])&255]^(c>>>8); return (c^0xFFFFFFFF)>>>0; };
+  function zip(files){ // store-only zip
+    const parts=[], cen=[]; let off=0;
+    files.forEach(f=>{ const nm=enc.encode(f.name), data=typeof f.data==='string'?enc.encode(f.data):f.data, crc=crc32(data);
+      const h=new DataView(new ArrayBuffer(30)); h.setUint32(0,0x04034b50,true); h.setUint16(4,20,true); h.setUint16(6,0x0800,true); h.setUint16(8,0,true); h.setUint16(10,0,true); h.setUint16(12,0x21,true);
+      h.setUint32(14,crc,true); h.setUint32(18,data.length,true); h.setUint32(22,data.length,true); h.setUint16(26,nm.length,true); h.setUint16(28,0,true);
+      parts.push(new Uint8Array(h.buffer),nm,data);
+      const c=new DataView(new ArrayBuffer(46)); c.setUint32(0,0x02014b50,true); c.setUint16(4,20,true); c.setUint16(6,20,true); c.setUint16(8,0x0800,true); c.setUint16(10,0,true); c.setUint16(12,0,true); c.setUint16(14,0x21,true);
+      c.setUint32(16,crc,true); c.setUint32(20,data.length,true); c.setUint32(24,data.length,true); c.setUint16(28,nm.length,true); c.setUint32(42,off,true);
+      cen.push(new Uint8Array(c.buffer),nm); off+=30+nm.length+data.length; });
+    const cs=cen.reduce((a,b)=>a+b.length,0); const e=new DataView(new ArrayBuffer(22)); e.setUint32(0,0x06054b50,true); e.setUint16(8,files.length,true); e.setUint16(10,files.length,true); e.setUint32(12,cs,true); e.setUint32(16,off,true);
+    return new Blob([...parts,...cen,new Uint8Array(e.buffer)],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  }
+  const x = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const col = n => { let s=''; n++; while(n){ const m=(n-1)%26; s=String.fromCharCode(65+m)+s; n=Math.floor((n-1)/26); } return s; };
+  const ref = (r,c) => col(c)+(r+1);
+  // fonts: [size,bold,name]
+  const FONTS = [[9,0,'Calibri'],[9,1,'Calibri'],[20,1,'Cambria'],[11,1,'Calibri'],[10,0,'Calibri'],[8,0,'Calibri'],[8,1,'Calibri'],[12,1,'Calibri'],[10,1,'Calibri']];
+  // borders: 0 none, 1 thin all, 2 top dotted, 3 bottom double
+  const BORDERS = ['<border><left/><right/><top/><bottom/><diagonal/></border>',
+    '<border><left style="thin"><color auto="1"/></left><right style="thin"><color auto="1"/></right><top style="thin"><color auto="1"/></top><bottom style="thin"><color auto="1"/></bottom><diagonal/></border>',
+    '<border><left/><right/><top style="dotted"><color auto="1"/></top><bottom/><diagonal/></border>',
+    '<border><left/><right/><top/><bottom style="double"><color auto="1"/></bottom><diagonal/></border>'];
+  // xf: [font,border,numFmt,horizontal,rotation,wrap]
+  const XF = {def:[0,0,0],title:[2,0,0,'center'],head:[7,0,0,'center'],sec:[3,0,0,'center'],info:[8,0,0,'center'],
+    th:[1,1,0,'center',0,1],thv:[1,1,0,'center',90,1],tdl:[0,1,0,'left'],tdc:[0,1,0,'center'],td1:[0,1,164,'center'],tdz:[0,1,165,'center'],tdb:[1,1,0,'center'],tdbz:[1,1,165,'center'],
+    sth:[6,1,0,'center',0,1],stl:[5,1,0,'left'],stc:[5,1,0,'center'],stz:[5,1,165,'center'],stp:[5,1,9,'center'],st1:[5,1,164,'center'],stb:[6,1,0,'center'],
+    sig:[6,2,0,'center'],note:[5,0,0,'left'],rule:[0,3,0,'center']};
+  const XFK = Object.keys(XF), XFI = Object.fromEntries(XFK.map((k,i)=>[k,i]));
+  function styles(letters){
+    return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+<numFmts count="2"><numFmt numFmtId="164" formatCode="0.0"/><numFmt numFmtId="165" formatCode="0;-0;;@"/></numFmts>
+<fonts count="${FONTS.length}">${FONTS.map(([s,b,n])=>`<font>${b?'<b/>':''}<sz val="${s}"/><color theme="1"/><name val="${n}"/><family val="${n==='Cambria'?1:2}"/></font>`).join('')}</fonts>
+<fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills>
+<borders count="${BORDERS.length}">${BORDERS.join('')}</borders>
+<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>
+<cellXfs count="${XFK.length}">${XFK.map(k=>{ const [f,b,nf,h,rot,wr]=XF[k]; return `<xf numFmtId="${nf}" fontId="${f}" fillId="0" borderId="${b}" xfId="0" applyNumberFormat="1" applyFont="1" applyBorder="1" applyAlignment="1"><alignment ${h?`horizontal="${h}" `:''}vertical="center"${rot?` textRotation="${rot}"`:''}${wr?' wrapText="1"':''}/></xf>`; }).join('')}</cellXfs>
+<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>
+<dxfs count="${letters.length}">${letters.map((g,i)=>`<dxf><numFmt numFmtId="${166+i}" formatCode="General&quot;-${x(g).replace(/"/g,'')}&quot;"/></dxf>`).join('')}</dxfs>
+</styleSheet>`;
+  }
+  class Sheet{
+    constructor(name){ this.name=name; this.cells={}; this.merges=[]; this.cols={}; this.rows={}; this.cf=[]; this.dv=[]; this.maxR=0; this.maxC=0; this.freeze=null; this.printArea=null; }
+    put(r,c,v,st='tdc'){ (this.cells[r]=this.cells[r]||{})[c]={v,st}; this.maxR=Math.max(this.maxR,r); this.maxC=Math.max(this.maxC,c); }
+    f(r,c,formula,st='tdc'){ (this.cells[r]=this.cells[r]||{})[c]={f:formula,st}; this.maxR=Math.max(this.maxR,r); this.maxC=Math.max(this.maxC,c); }
+    style(r,c,st){ const cell=(this.cells[r]=this.cells[r]||{})[c]; if(cell) cell.st=st; else this.cells[r][c]={st}; }
+    merge(r1,c1,r2,c2,st){ this.merges.push(`${ref(r1,c1)}:${ref(r2,c2)}`); if(st) for(let r=r1;r<=r2;r++) for(let c=c1;c<=c2;c++) if(!(this.cells[r]&&this.cells[r][c]&&(this.cells[r][c].v!==undefined||this.cells[r][c].f))) this.style(r,c,st); else this.cells[r][c].st=st; }
+    xml(letters){
+      const rowsX = Object.keys(this.cells).map(Number).sort((a,b)=>a-b).map(r=>{
+        const cs = Object.keys(this.cells[r]).map(Number).sort((a,b)=>a-b).map(c=>{ const cell=this.cells[r][c], s=XFI[cell.st]??0, R=ref(r,c);
+          if(cell.f) return `<c r="${R}" s="${s}"><f>${x(cell.f)}</f></c>`;
+          if(typeof cell.v==='number') return `<c r="${R}" s="${s}"><v>${cell.v}</v></c>`;
+          if(cell.v===undefined||cell.v==='') return `<c r="${R}" s="${s}"/>`;
+          return `<c r="${R}" s="${s}" t="inlineStr"><is><t xml:space="preserve">${x(cell.v)}</t></is></c>`; }).join('');
+        const ht=this.rows[r]; return `<row r="${r+1}"${ht?` ht="${ht}" customHeight="1"`:''}>${cs}</row>`; }).join('');
+      const colsX = Object.keys(this.cols).map(Number).sort((a,b)=>a-b).map(c=>`<col min="${c+1}" max="${c+1}" width="${this.cols[c]}" customWidth="1"/>`).join('');
+      const fz = this.freeze ? `<pane xSplit="${this.freeze[1]}" ySplit="${this.freeze[0]}" topLeftCell="${ref(this.freeze[0],this.freeze[1])}" activePane="bottomRight" state="frozen"/><selection pane="bottomRight" activeCell="${ref(this.freeze[0],this.freeze[1])}" sqref="${ref(this.freeze[0],this.freeze[1])}"/>` : '';
+      let pri=1; const cfX = this.cf.map(([sq,bands])=>`<conditionalFormatting sqref="${sq}">`+
+        bands.map(b=>`<cfRule type="cellIs" dxfId="${letters.indexOf(b.g)}" priority="${pri++}" stopIfTrue="1" operator="greaterThanOrEqual"><formula>${b.min}</formula></cfRule>`).join('')+`</conditionalFormatting>`).join('');
+      const dvX = this.dv.length ? `<dataValidations count="${this.dv.length}">`+this.dv.map(([sq,tl])=>`<dataValidation type="custom" allowBlank="1" showErrorMessage="1" errorTitle="Invalid mark" error="Enter a mark from 0 to 100, or Ab for absent." sqref="${sq}"><formula1>${x(`OR(AND(ISNUMBER(${tl}),${tl}>=0,${tl}<=100),UPPER(${tl})="AB")`)}</formula1></dataValidation>`).join('')+`</dataValidations>` : '';
+      return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+<sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><dimension ref="A1:${ref(this.maxR,this.maxC)}"/>
+<sheetViews><sheetView workbookViewId="0" showGridLines="0" zoomScale="100">${fz}</sheetView></sheetViews><sheetFormatPr defaultRowHeight="15"/>
+${colsX?`<cols>${colsX}</cols>`:''}<sheetData>${rowsX}</sheetData>
+${this.merges.length?`<mergeCells count="${this.merges.length}">${this.merges.map(m=>`<mergeCell ref="${m}"/>`).join('')}</mergeCells>`:''}${cfX}${dvX}
+<printOptions/><pageMargins left="0.8" right="0.25" top="0.25" bottom="0.25" header="0" footer="0"/>
+<pageSetup paperSize="8" orientation="landscape" fitToWidth="1" fitToHeight="1"/></worksheet>`;
+    }
+  }
+  function book(sheets){
+    const letters=[...new Set(sheets.flatMap(s=>s.letters||[]))];
+    const names=new Set(); sheets.forEach(s=>{ let n=String(s.name).replace(/[\[\]:*?\/\\]/g,' ').slice(0,31)||'Sheet'; let k=n,i=2; while(names.has(k.toLowerCase())) k=n.slice(0,28)+' '+(i++); names.add(k.toLowerCase()); s.name=k; });
+    const files=[
+      {name:'[Content_Types].xml',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>${sheets.map((s,i)=>`<Override PartName="/xl/worksheets/sheet${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('')}<Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/></Types>`},
+      {name:'_rels/.rels',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/></Relationships>`},
+      {name:'docProps/core.xml',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>Marks Schedule</dc:title><dc:creator>Marks Schedule System</dc:creator><dcterms:created xsi:type="dcterms:W3CDTF">${new Date().toISOString().slice(0,19)}Z</dcterms:created></cp:coreProperties>`},
+      {name:'xl/workbook.xml',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><bookViews><workbookView/></bookViews><sheets>${sheets.map((s,i)=>`<sheet name="${x(s.name)}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join('')}</sheets><definedNames>${sheets.map((s,i)=>s.printArea?`<definedName name="_xlnm.Print_Area" localSheetId="${i}">'${x(s.name.replace(/'/g,"''"))}'!${s.printArea}</definedName>`:'').join('')}</definedNames><calcPr calcId="191029" fullCalcOnLoad="1"/></workbook>`},
+      {name:'xl/_rels/workbook.xml.rels',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${sheets.map((s,i)=>`<Relationship Id="rId${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join('')}<Relationship Id="rId${sheets.length+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`},
+      {name:'xl/styles.xml',data:styles(letters)},
+      ...sheets.map((s,i)=>({name:`xl/worksheets/sheet${i+1}.xml`,data:s.xml(letters)}))
+    ];
+    return zip(files);
+  }
+  return {Sheet,book,col,ref};
+})();
+
+// Build one class sheet — same layout as the A3 schedule, every calculation as an Excel formula
+function classSheet(cls, prof=P()){
+  const {c,subs,div} = computeSchedule(cls,prof); const sc=S.school; const {col,ref}=XL;
+  const B = GB.slice(), G = B.length, LET = B.map(b=>b.g);
+  const sh = new XL.Sheet(c.name); sh.letters = LET; const N=subs.length, n=Math.max(ROWS,c.students.length);
+  const C0=3, CT=C0+N, CA=CT+1, CR=CT+2, CG=CT+3, LAST=CG+G-1, GAP=LAST+1, R=GAP+1, RL=R+G+3;
+  const H=6, F=7, L=F+n-1;                           // header row, first/last student rows (0-based)
+  const xr = r => r+1;
+  const cnt = (rg,k) => { const lo=B[k].min, hi=k===0?null:B[k-1].min; return hi===null?`COUNTIF(${rg},">=${lo}")`:`COUNTIFS(${rg},">=${lo}",${rg},"<${hi}")`; };
+  // column widths
+  Object.assign(sh.cols,{0:4,1:8,2:26}); for(let i=0;i<N;i++) sh.cols[C0+i]=6.3; Object.assign(sh.cols,{[CT]:6.5,[CA]:6.5,[CR]:5}); for(let i=0;i<G;i++) sh.cols[CG+i]=3.6;
+  sh.cols[GAP]=1.5; sh.cols[R]=15; for(let i=1;i<=G;i++) sh.cols[R+i]=3.8; sh.cols[R+G+1]=6.5; sh.cols[R+G+2]=6.3; sh.cols[R+G+3]=6.3;
+  // title block
+  sh.put(0,0,'MARKS SCHEDULE','head'); sh.merge(0,0,0,RL); sh.rows[0]=18;
+  sh.put(1,0,(sc.name||'School Name').toUpperCase(),'title'); sh.merge(1,0,1,RL); sh.rows[1]=30;
+  sh.put(2,0,`${(secOf(cls)||'').toUpperCase()} SECTION`,'sec'); sh.merge(2,0,2,RL); sh.rows[2]=17;
+  sh.put(3,0,`${prof.term} Term — ${prof.year}`,'sec'); sh.merge(3,0,3,RL); sh.rows[3]=17;
+  sh.put(4,0,`Class: ${c.name}        Class Teacher: ${c.teacher||'—'}        No. of Students: ${c.students.length}        Average = Total ÷ ${div}`,'info'); sh.merge(4,0,4,RL); sh.rows[4]=17;
+  for(let cc=0;cc<=RL;cc++) sh.style(5,cc,'rule'); sh.rows[5]=5;
+  // header
+  sh.rows[H]=92;
+  sh.put(H,0,'No','th'); sh.put(H,1,'Adm. No','th'); sh.put(H,2,'Name of Student','th');
+  subs.forEach((s,i)=>sh.put(H,C0+i,s,'thv')); sh.put(H,CT,'Total','thv'); sh.put(H,CA,'Average','thv'); sh.put(H,CR,'Rank','thv'); LET.forEach((g,i)=>sh.put(H,CG+i,g,'th'));
+  const mFirst=col(C0), mLast=col(C0+N-1);
+  for(let i=0;i<n;i++){
+    const r=F+i, er=xr(r), st=c.students[i]; sh.rows[r]=14.5;
+    sh.put(r,0,i+1,'tdc');
+    if(st){ sh.put(r,1,st.admissionNo,'tdc'); sh.put(r,2,st.name,'tdl'); subs.forEach((s,k)=>{ const v=c.marks[st.id]?.[s]; sh.put(r,C0+k, isMark(v)?v:isAb(v)?'Ab':'', 'tdc'); }); }
+    else { sh.put(r,1,'','tdc'); sh.put(r,2,'','tdl'); subs.forEach((s,k)=>sh.put(r,C0+k,'','tdc')); }
+    const rg=`${mFirst}${er}:${mLast}${er}`, T=`${col(CT)}${er}`;
+    sh.f(r,CT,`IF(COUNT(${rg})=0,"",SUM(${rg}))`,'tdb');
+    sh.f(r,CA,`IF(${T}="","",${T}/${div})`,'td1');
+    sh.f(r,CR,`IF(${T}="","",RANK(${T},$${col(CT)}$${xr(F)}:$${col(CT)}$${xr(L)}))`,'tdb');
+    for(let k=0;k<G;k++) sh.f(r,CG+k,`IF(${T}="","",${cnt(rg,k)})`,'tdz');
+  }
+  const markRange=`${mFirst}${xr(F)}:${mLast}${xr(L)}`;
+  sh.cf.push([markRange,B]); sh.dv.push([markRange,`${mFirst}${xr(F)}`]);
+  // ---- right panel: Subject Analysis
+  let r=F; const SC=k=>`$${col(C0+k)}$${xr(F)}:$${col(C0+k)}$${xr(L)}`;
+  sh.put(r,R,'SUBJECT ANALYSIS','sth'); sh.merge(r,R,r,RL,'sth'); r++;
+  ['Subject',...LET,'Pass %','≥ 40','< 40'].forEach((t,i)=>sh.put(r,R+i,t,'sth')); r++;
+  subs.forEach((s,k)=>{ const g=SC(k); sh.put(r,R,s,'stl');
+    for(let j=0;j<G;j++) sh.f(r,R+1+j,cnt(g,j),'stz');
+    sh.f(r,R+G+1,`IF(COUNT(${g})=0,"",COUNTIF(${g},">=${PASS}")/COUNT(${g}))`,'stp'); sh.f(r,R+G+2,`IF(COUNT(${g})=0,"",COUNTIF(${g},">=40"))`,'stc'); sh.f(r,R+G+3,`IF(COUNT(${g})=0,"",COUNTIF(${g},"<40"))`,'stc'); r++; });
+  r++;
+  // ---- Highest marks & subject teachers
+  sh.put(r,R,'HIGHEST MARKS & SUBJECT TEACHERS','sth'); sh.merge(r,R,r,RL,'sth'); r++;
+  sh.put(r,R,'Subject','sth'); sh.put(r,R+1,'Mark','sth'); sh.merge(r,R+1,r,R+2,'sth'); sh.put(r,R+3,'Student','sth'); sh.merge(r,R+3,r,R+G+1,'sth'); sh.put(r,R+G+2,'Subject Teacher','sth'); sh.merge(r,R+G+2,r,RL,'sth'); r++;
+  subs.forEach((s,k)=>{ const g=SC(k); sh.put(r,R,s,'stl');
+    sh.f(r,R+1,`IF(COUNT(${g})=0,"",MAX(${g}))`,'stb'); sh.merge(r,R+1,r,R+2,'stb');
+    sh.f(r,R+3,`IF(COUNT(${g})=0,"",INDEX($C$${xr(F)}:$C$${xr(L)},MATCH(MAX(${g}),${g},0)))`,'stl'); sh.merge(r,R+3,r,R+G+1,'stl');
+    sh.put(r,R+G+2,c.subjectTeachers?.[s]||'','stl'); sh.merge(r,R+G+2,r,RL,'stl'); r++; });
+  r++;
+  // ---- Class summary
+  const AV=`$${col(CA)}$${xr(F)}:$${col(CA)}$${xr(L)}`, TT=`$${col(CT)}$${xr(F)}:$${col(CT)}$${xr(L)}`;
+  sh.put(r,R,'CLASS SUMMARY','sth'); sh.merge(r,R,r,RL,'sth'); r++;
+  [['Students sat',`COUNT(${TT})`,'stb'],['Class average',`IF(COUNT(${AV})=0,"",AVERAGE(${AV}))`,'st1'],[`Pass rate (average ≥ ${PASS})`,`IF(COUNT(${AV})=0,"",COUNTIF(${AV},">=${PASS}")/COUNT(${AV}))`,'stp'],['Highest total',`IF(COUNT(${TT})=0,"",MAX(${TT}))`,'stb']]
+    .forEach(([lab,fm,stl])=>{ sh.put(r,R,lab,'stl'); sh.merge(r,R,r,R+G,'stl'); sh.f(r,R+G+1,fm,stl); sh.merge(r,R+G+1,r,RL,stl); r++; });
+  r++;
+  sh.put(r,R,`Grade key: ${bandText(B)}  Ab = Absent`,'note'); sh.merge(r,R,r,RL); r++;
+  sh.put(r,R,'Type marks in the white cells; totals, ranks and grades update automatically.','note'); sh.merge(r,R,r,RL);
+  // ---- signatures
+  const sr = Math.max(L, r) + 3; sh.rows[sr-1]=24;
+  const mid = C0+Math.floor(N/2);
+  [[1,2,'Class Teacher'],[Math.max(C0,mid-2),Math.min(CT-1,mid+1),'Sectional Head'],[CT,LAST,'Principal']].forEach(([a,b,t])=>{ sh.put(sr,a,t,'sig'); sh.merge(sr,a,sr,b,'sig'); });
+  if(c.teacher){ sh.put(sr+1,1,c.teacher,'note'); sh.merge(sr+1,1,sr+1,2); sh.style(sr+1,1,'info'); }
+  Object.keys(sh.cols).forEach(k=>{ if(+k!==GAP) sh.cols[k]=+(sh.cols[k]*1.27).toFixed(2); });
+  sh.freeze=[F,3]; sh.printArea=`$A$1:$${col(RL)}$${sr+2}`;
+  return sh;
+}
+function exportExcel(ids, fname){
+  const p=P(); const sheets = sortClasses(ids.map(id=>getClass(id))).map(c=>classSheet(c,p));
+  const name = fname || (ids.length===1 ? `Marks Schedule - ${getClass(ids[0]).name} - ${p.term} Term ${p.year}.xlsx` : `Marks Schedule - ${p.term} Term ${p.year}.xlsx`);
+  download(fileSafe(name), XL.book(sheets)); toast('Excel downloaded');
+}
+
+// =====================================================================
+// 4. PRINT PAGE
+// =====================================================================
+let PR = {mode:'list',id:null};
+function pagePrint(){
+  if(!needP()) return; const p=P(); const list=sortClasses(p.classes);
+  if(PR.mode==='single'||PR.mode==='bulk'){
+    const ids = PR.mode==='single'?[PR.id]:list.map(c=>c.id);
+    view(`<div style="padding:16px"><div class="row" style="justify-content:space-between;margin-bottom:12px"><button class="btn ghost sm" onclick="PR={mode:'list'};pagePrint()">← Back</button>
+      <div class="row"><button class="btn out" onclick="exportExcel(${esc(JSON.stringify(ids))})">⬇ Excel (.xlsx)</button><button class="btn" onclick="printSheets(${esc(JSON.stringify(ids))})">🖨 ${PR.mode==='bulk'?'Print All':'Print'} / Save PDF</button></div></div>
+      <div class="a3wrap" id="a3wrap">${ids.map(id=>a3HTML(getClass(id))).join('')}</div></div>`);
+    requestAnimationFrame(fitPreview); return;
+  }
+  view(`<div class="page"><h1>🖨️ Print A3</h1><p class="sub">Each class prints on one A3 landscape page (left margin 0.8", other margins 0.25"). In the print window choose <b>Save as PDF</b> or your printer, keep <b>Scale: Default</b> and <b>Margins: Default</b>. The sheet is black only.</p>
+    <div class="row" style="margin-bottom:18px">${MODE==='teacher'?'':`<button class="btn lg" ${list.length?'':'disabled'} onclick="PR={mode:'bulk'};pagePrint()">🗂 Bulk Print All Classes</button>`}
+    <button class="btn lg out" ${list.length?'':'disabled'} onclick="exportExcel(P().classes.map(c=>c.id))">⬇ Excel — all classes (one sheet per class)</button></div>
+    ${classTiles(list,'prPick')}</div>`);
+}
+function prPick(id){ PR={mode:'single',id}; pagePrint(); }
+
+// =====================================================================
+// 5. ANALYTICS
+// =====================================================================
+function analyticsFor(cls, prof=P()){
+  const {c,subs,div,rows,subStats} = computeSchedule(cls,prof);
+  const present = rows.filter(r=>r.marks.some(isMark));
+  const classAverage = present.length?present.reduce((a,r)=>a+r.avg,0)/present.length:0;
+  const passRate = present.length?present.filter(r=>r.avg>=PASS).length/present.length*100:0;
+  const subjectAvgs = subStats.filter(x=>x.used).map(x=>({sub:x.sub,avg:x.avg,passRate:x.passPct,n:x.n,above40:x.above40,below40:x.below40,hi:x.hi,lo:x.n?Math.min(...c.students.map(st=>c.marks[st.id]?.[x.sub]).filter(isMark)):null}));
+  const sorted = [...subjectAvgs].sort((a,b)=>b.avg-a.avg);
+  const ranked = [...present].sort((a,b)=>(a.rank||999)-(b.rank||999));
+  const top = ranked[0], last = ranked[ranked.length-1];
+  const subjOf = r => r ? subs.map((s,k)=>({sub:s,mark:isMark(r.marks[k])?r.marks[k]:null})).filter(x=>x.mark!==null) : [];
+  const bands=[['0-19',0,19],['20-34',20,34],['35-49',35,49],['50-64',50,64],['65-74',65,74],['75-100',75,100]].map(([l,a,b])=>({label:l,count:present.filter(r=>r.avg>=a&&r.avg<=b+.999).length}));
+  const gradeTotals=zeroCounts(); subStats.forEach(x=>GL().forEach(g=>gradeTotals[g]+=x[g]));
+  return {c,subs,div,rows,present,ranked,classAverage,passRate,subjectAvgs,bestSubject:sorted[0],weakSubject:sorted[sorted.length-1],
+    above75:present.filter(r=>r.avg>=75).length,below20:present.filter(r=>r.avg<20).length,top,last,topSubjects:subjOf(top),lastSubjects:subjOf(last),bands,gradeTotals,
+    highest:present.length?Math.max(...present.map(r=>r.avg)):0,lowest:present.length?Math.min(...present.map(r=>r.avg)):0};
+}
+function bars(data,{w=560,h=240,max=100,color='#1e3a5f',colors=null,rot=true,key='value',labelKey='name'}={}){
+  if(!data.length) return `<div class="hint" style="padding:30px;text-align:center">No data</div>`;
+  if(max!==100){ max=[4,8,20,40,100,200,400].find(v=>v>=max)||Math.ceil(max/100)*100; }
+  const pl=34,pb=rot?62:26,pt=14,pr=8, cw=(w-pl-pr)/data.length, bw=Math.min(46,cw*.65), H=h-pt-pb;
+  let s=`<svg viewBox="0 0 ${w} ${h}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="font-family:system-ui;font-size:10px">`;
+  for(let i=0;i<=4;i++){ const y=pt+H-H*i/4; s+=`<line x1="${pl}" x2="${w-pr}" y1="${y}" y2="${y}" stroke="#ddd" stroke-dasharray="3 3"/><text x="${pl-4}" y="${y+3}" text-anchor="end" fill="#555">${Math.round(max*i/4)}</text>`; }
+  data.forEach((d,i)=>{ const v=d[key]||0; const bh=H*Math.min(v,max)/max; const x=pl+cw*i+(cw-bw)/2, y=pt+H-bh; const colr=colors?colors[i]:color;
+    s+=`<rect x="${x}" y="${y}" width="${bw}" height="${bh}" fill="${colr}" rx="2"/><text x="${x+bw/2}" y="${y-3}" text-anchor="middle" font-weight="700" fill="#222">${typeof v==='number'?(Number.isInteger(v)?v:v.toFixed(1)):v}</text>`;
+    const lx=pl+cw*i+cw/2, ly=pt+H+12;
+    s+= rot?`<text transform="translate(${lx},${ly}) rotate(-35)" text-anchor="end" fill="#333">${esc(d[labelKey])}</text>`:`<text x="${lx}" y="${ly}" text-anchor="middle" fill="#333">${esc(d[labelKey])}</text>`; });
+  return s+`<line x1="${pl}" x2="${w-pr}" y1="${pt+H}" y2="${pt+H}" stroke="#333"/></svg>`;
+}
+
+// =====================================================================
+// 6. REPORTS (16:9 presentation)
+// =====================================================================
+let RP = {mode:'home',cid:null,slide:0};
+function pageReports(){
+  if(!needP()) return;
+  if(RP.mode==='deck') return openDeck();
+  if(RP.mode==='backup') return pageBackupXls();
+  const list=sortClasses(P().classes);
+  view(`<div class="page"><h1>📊 Reports</h1><p class="sub">${esc(P().name)} — choose a class to open the presentation-style results analysis (16:9).</p>
+    <div class="row" style="margin-bottom:18px">${MODE==='teacher'?'':`<a class="btn lg sec" href="#/progress">🔍 Search Student</a><button class="btn lg sec" onclick="RP.mode='backup';pageReports()">⬇ Get Backup</button>`}</div>
+    ${classTiles(list,'rpPick',c=>`${filled(c).length} students<br><b style="color:var(--fg)">Open Presentation →</b>`)}</div>`);
+}
+function rpPick(id){ RP={mode:'deck',cid:id,slide:0}; pageReports(); }
+function slideWrap(title,body){ return `<div class="slide"><div class="sh">${title}</div><div class="sb">${body}</div></div>`; }
+function slidesFor(cls){
+  const prof=P(), a = analyticsFor(cls), sc=S.school, N=cls.name, navy='#1e3a5f', gold='#C9A24B';
+  const sl = [];
+  sl.push(`<div class="slide" style="background:linear-gradient(135deg,#1e3a5f,#0f2440);color:#fff;align-items:center;justify-content:center;text-align:center;gap:14px">
+    ${sc.logo?`<img src="${sc.logo}" style="height:120px;background:#fff;border-radius:12px;padding:8px">`:''}
+    <div style="font-size:22px;letter-spacing:2px;text-transform:uppercase;color:${gold}">${esc(sc.name||'School Name')}</div>
+    <div style="font-size:56px;font-weight:700">Results Analysis</div><div style="font-size:34px">Grade ${esc(N)} · ${esc(secOf(cls)||'')} Section</div>
+    <div style="font-size:22px;opacity:.85">${esc(prof.term)} Term — ${esc(prof.year)}${cls.teacher?` · Class Teacher: ${esc(cls.teacher)}`:''}</div></div>`);
+  const shown=a.ranked.slice(0,22);
+  sl.push(slideWrap(`Student Ranking — Grade ${esc(N)}`,`<table style="font-size:12px"><thead><tr><th>Rank</th><th>Adm.</th><th style="text-align:left">Name</th>${a.subs.map(s=>`<th style="font-size:10px">${esc(s)}</th>`).join('')}<th>Total</th><th>Avg</th></tr></thead><tbody>`+
+    shown.map(r=>`<tr><td><b>${r.rank}</b></td><td>${esc(r.s.admissionNo)}</td><td style="text-align:left">${esc(r.s.name)}</td>${r.marks.map(m=>`<td>${isMark(m)?m:isAb(m)?'Ab':''}</td>`).join('')}<td><b>${r.total}</b></td><td>${r.avg.toFixed(1)}</td></tr>`).join('')+`</tbody></table>${a.ranked.length>shown.length?`<div class="hint">Showing top ${shown.length} of ${a.ranked.length} students.</div>`:''}`));
+  const k=(l,v,bg)=>`<div class="kpi" style="background:${bg}"><div class="k">${l}</div><div class="v">${v}</div></div>`;
+  sl.push(slideWrap(`Key Indicators — Grade ${esc(N)}`,`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">${k('Students sat',a.present.length,navy)}${k('Class Average',a.classAverage.toFixed(1),'#0f766e')}${k(`Pass Rate (avg ≥ ${PASS})`,a.passRate.toFixed(0)+'%','#1B5E20')}${k('Highest Average',a.highest.toFixed(1),gold)}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px;height:420px"><div class="panel"><b style="color:${navy}">Total grades awarded</b><div style="height:370px">${bars(GL().map(g=>({name:g,value:a.gradeTotals[g]})),{max:Math.max(4,...Object.values(a.gradeTotals)),colors:gradeColors(),rot:false,h:300})}</div></div>
+    <div class="panel"><b style="color:${navy}">Highlights</b><ul style="font-size:17px;line-height:1.9"><li>1st rank: <b>${esc(a.top?.s.name||'-')}</b> (${a.top?a.top.avg.toFixed(1):'-'})</li><li>Best subject: <b>${esc(a.bestSubject?.sub||'-')}</b> (${a.bestSubject?a.bestSubject.avg.toFixed(1):'-'})</li><li>Weakest subject: <b>${esc(a.weakSubject?.sub||'-')}</b> (${a.weakSubject?a.weakSubject.avg.toFixed(1):'-'})</li><li>${a.above75} student(s) averaged 75 or above</li><li>${a.below20} student(s) averaged below 20</li><li>Lowest average: ${a.lowest.toFixed(1)}</li></ul></div></div>`));
+  sl.push(slideWrap(`Average Range Distribution — Grade ${esc(N)}`,`<div style="display:grid;grid-template-columns:2fr 1fr;gap:18px;height:100%"><div class="panel">${bars(a.bands.map(b=>({name:b.label,value:b.count})),{max:Math.max(4,...a.bands.map(b=>b.count)),rot:false,h:300,colors:['#B71C1C','#EF6C00','#F9A825','#2E7D32','#1B5E20','#0D47A1']})}</div>
+    <div class="panel"><table style="font-size:16px"><thead><tr><th>Average range</th><th>Students</th></tr></thead><tbody>${a.bands.map(b=>`<tr><td>${b.label}</td><td><b>${b.count}</b></td></tr>`).join('')}</tbody></table></div></div>`));
+  sl.push(slideWrap(`Subject Performance — Grade ${esc(N)}`,`<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;height:100%"><div class="panel"><b style="color:${navy}">Average %</b><div style="height:560px">${bars(a.subjectAvgs.map(x=>({name:x.sub,value:+x.avg.toFixed(1)})),{h:500})}</div></div>
+    <div class="panel"><b style="color:${navy}">Pass % (${PASS}+)</b><div style="height:560px">${bars(a.subjectAvgs.map(x=>({name:x.sub,value:+x.passRate.toFixed(0)})),{h:500,color:'#1B5E20'})}</div></div></div>`));
+  sl.push(slideWrap(`Above / Below 40 by Subject — Grade ${esc(N)}`,`<table style="font-size:15px"><thead><tr><th style="text-align:left">Subject</th><th>Sat</th><th>Highest</th><th>Lowest</th><th>Average</th><th>Above 40</th><th>Below 40</th><th>% Above 40</th></tr></thead><tbody>`+
+    a.subjectAvgs.map(x=>`<tr><td style="text-align:left">${esc(x.sub)}</td><td>${x.n}</td><td>${x.hi??'-'}</td><td>${x.lo??'-'}</td><td>${x.avg.toFixed(1)}</td><td style="color:#1B5E20;font-weight:700">${x.above40}</td><td style="color:#B71C1C;font-weight:700">${x.below40}</td><td>${x.n?(x.above40/x.n*100).toFixed(0)+'%':'-'}</td></tr>`).join('')+`</tbody></table>`));
+  const pan=(t,arr,colr)=>`<div style="border:2px solid ${colr};border-radius:8px;padding:10px;display:flex;flex-direction:column"><div style="font-weight:700;color:${colr};font-size:16px;text-align:center">${t}</div><div style="height:240px">${bars(arr.map(x=>({name:x.sub,value:x.mark})),{h:240,color:colr})}</div>
+    <table style="font-size:11px;margin-top:6px"><thead><tr><th style="background:${colr}">Subject</th><th style="background:${colr}">Mark</th><th style="background:${colr}">Grade</th></tr></thead><tbody>${arr.map(x=>`<tr><td style="text-align:left">${esc(x.sub)}</td><td>${x.mark}</td><td><b>${grade(x.mark)}</b></td></tr>`).join('')}</tbody></table></div>`;
+  sl.push(slideWrap(`Top vs Last Rank Student — Grade ${esc(N)}`,`<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">${pan(`1st Rank — ${esc(a.top?.s.name||'-')}`,a.topSubjects,'#1B5E20')}${pan(`Last Rank — ${esc(a.last?.s.name||'-')}`,a.lastSubjects,'#B71C1C')}</div>`));
+  const n0=gradeNo(N); const par=sortClasses(prof.classes.filter(c=>gradeNo(c.name)===n0)).map(c=>{ const xx=analyticsFor(c); return {name:c.name,avg:xx.classAverage,pass:xx.passRate,students:xx.present.length,self:c.id===cls.id}; });
+  const pos=[...par].sort((p1,p2)=>p2.avg-p1.avg).findIndex(p1=>p1.self)+1;
+  const sorted=[...a.subjectAvgs].sort((p1,p2)=>p2.avg-p1.avg), best3=sorted.slice(0,3), weak3=[...sorted].reverse().slice(0,3);
+  sl.push(slideWrap(`Summary, Comparison & Recommendations — Grade ${esc(N)}`,`<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;height:100%;font-size:12px">
+    <div style="display:flex;flex-direction:column;gap:10px;min-height:0"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+      <div class="kpi" style="background:${navy};padding:10px"><div class="k">Class Average</div><div class="v" style="font-size:26px">${a.classAverage.toFixed(1)}</div></div>
+      <div class="kpi" style="background:#1B5E20;padding:10px"><div class="k">Pass Rate</div><div class="v" style="font-size:26px">${a.passRate.toFixed(0)}%</div></div>
+      <div class="kpi" style="background:#0f2440;padding:10px"><div class="k">Position in Grade</div><div class="v" style="font-size:26px">${pos||'-'} / ${par.length}</div></div></div>
+      <div class="panel"><b style="color:${navy}">Comparison with Parallel Classes (Grade ${n0})</b><table style="font-size:12px;margin-top:6px"><thead><tr><th style="text-align:left">Class</th><th>Students</th><th>Average</th><th>Pass %</th></tr></thead><tbody>${par.map(p1=>`<tr style="${p1.self?'background:#C9A24B44;font-weight:700':''}"><td style="text-align:left">${esc(p1.name)}${p1.self?' (this class)':''}</td><td>${p1.students}</td><td>${p1.avg.toFixed(1)}</td><td>${p1.pass.toFixed(0)}%</td></tr>`).join('')}</tbody></table></div>
+      <div class="panel" style="flex:1;min-height:0"><b style="color:${navy}">Average by Class</b><div style="height:190px">${bars(par.map(p1=>({name:p1.name,value:+p1.avg.toFixed(1)})),{h:190,rot:false,colors:par.map(p1=>p1.self?navy:gold)})}</div></div></div>
+    <div style="display:flex;flex-direction:column;gap:10px;min-height:0">
+      <div style="background:#1B5E20;color:#fff;padding:10px;border-radius:8px"><b>Strengths & Excellent Performance</b><ul style="margin:4px 0 0;padding-left:18px;line-height:1.5">${best3.map(p1=>`<li>${esc(p1.sub)} — average ${p1.avg.toFixed(1)}, pass ${p1.passRate.toFixed(0)}%</li>`).join('')}<li>${a.above75} student(s) achieved an average of 75% or above.</li></ul></div>
+      <div style="background:#B71C1C;color:#fff;padding:10px;border-radius:8px"><b>Weaknesses</b><ul style="margin:4px 0 0;padding-left:18px;line-height:1.5">${weak3.map(p1=>`<li>${esc(p1.sub)} — average ${p1.avg.toFixed(1)}, pass ${p1.passRate.toFixed(0)}%</li>`).join('')}<li>${a.below20} student(s) remain below a 20% average and need urgent remedial support.</li></ul></div>
+      <div class="panel" style="flex:1;min-height:0;overflow:hidden"><b style="color:${navy}">Ideas to Improve Results</b><ul style="margin:4px 0;padding-left:18px;line-height:1.55">
+        <li>Run weekly remedial classes for <b>${esc(a.weakSubject?.sub||'the weakest subject')}</b> with graded worksheets and short weekly tests.</li>
+        <li>Pair the ${a.above75} high achiever(s) with low scorers for structured peer-tutoring sessions.</li>
+        <li>Set a target to lift the class average from ${a.classAverage.toFixed(1)} to ${Math.min(100,a.classAverage+5).toFixed(1)} next term.</li>
+        <li>Hold a subject-teacher review with the parallel classes to share methods used by the top-performing section.</li>
+        <li>Monitor absentees closely — repeated absence in tests hides genuine weaknesses.</li>
+        <li>Give monthly progress feedback to parents of students scoring below 40 in main subjects.</li></ul>
+        <div style="margin-top:6px;padding:8px;background:#f5eee6;border-left:4px solid ${gold};line-height:1.5"><b style="color:${navy}">Conclusion:</b> Grade ${esc(N)} recorded a class average of ${a.classAverage.toFixed(1)} with a ${a.passRate.toFixed(0)}% pass rate across ${a.present.length} students (fully absent students excluded). Strongest: <b>${esc(a.bestSubject?.sub||'-')}</b>; weakest: <b>${esc(a.weakSubject?.sub||'-')}</b>.</div></div></div></div>`));
+  return sl;
+}
+let DECK=null;
+function openDeck(){
+  const cls=getClass(RP.cid); DECK=slidesFor(cls);
+  $('#modal').innerHTML = `<div class="deck"><div class="bar"><button class="btn ghost sm" style="color:#fff" onclick="closeDeck()">← Back</button><div>Slide <span id="sn"></span> / ${DECK.length}</div>
+    <div class="row"><button class="btn sec sm" onclick="printSlides()">⬇ PDF (print)</button></div></div>
+    <div class="stage" id="stage"><div id="slideBox" style="transform-origin:center center"></div>
+    <button class="arrow" style="left:12px" onclick="goSlide(-1)">‹</button><button class="arrow" style="right:12px" onclick="goSlide(1)">›</button></div>
+    <div class="thumbs">${DECK.map((_,i)=>`<button data-i="${i}" onclick="RP.slide=${i};drawSlide()">${i+1}</button>`).join('')}</div></div>`;
+  drawSlide(); window.addEventListener('resize',drawSlide); window.addEventListener('keydown',deckKeys);
+}
+function drawSlide(){ const box=$('#slideBox'); if(!box) return; box.innerHTML=DECK[RP.slide]; const st=$('#stage'); const k=Math.min((st.clientWidth-40)/1280,(st.clientHeight-40)/720); box.style.transform=`scale(${k})`;
+  $('#sn').textContent=RP.slide+1; document.querySelectorAll('.thumbs button').forEach(b=>b.classList.toggle('on',+b.dataset.i===RP.slide)); }
+function goSlide(d){ RP.slide=Math.max(0,Math.min(DECK.length-1,RP.slide+d)); drawSlide(); }
+function deckKeys(e){ if(e.key==='ArrowRight') goSlide(1); if(e.key==='ArrowLeft') goSlide(-1); if(e.key==='Escape') closeDeck(); }
+function closeDeck(){ window.removeEventListener('resize',drawSlide); window.removeEventListener('keydown',deckKeys); closeModal(); RP={mode:'home'}; pageReports(); }
+function printSlides(){
+  const pr=$('#printroot'); const k=(420*96/25.4)/1280;
+  pr.innerHTML = DECK.map(s=>`<div class="dpage"><div style="transform:scale(${k});transform-origin:top left;width:1280px">${s}</div></div>`).join('');
+  document.body.classList.add('printing');
+  setTimeout(()=>{ window.print(); setTimeout(()=>{document.body.classList.remove('printing');pr.innerHTML='';},400); },150);
+}
+
+// ---------- Search student / E-Progress (history across all marksheets) ----------
+function studentRecord(cls,sid,prof){
+  const subs=subjectsFor(cls,prof); const marks=subs.map(s=>({sub:s,mark:cls.marks[sid]?.[s]})); const ok=marks.filter(x=>isMark(x.mark)).map(x=>x.mark);
+  const total=ok.reduce((a,b)=>a+b,0); const rows=filled(cls).map(st=>{ const m=subs.map(s=>cls.marks[st.id]?.[s]); return {s:st,marks:m,total:m.filter(isMark).reduce((a,b)=>a+b,0)}; });
+  return {subjects:subs,marks,total,avg:total/divisorFor(cls,prof),rank:rankMap(rows).get(sid),entered:ok.length,className:cls.name,classSize:rows.filter(r=>r.marks.some(isMark)).length,cls,prof};
+}
+function findStudentHistory(adm,name){
+  const out=[]; [...S.profiles].sort((a,b)=>termOrder(a)-termOrder(b)).forEach(p=>p.classes.forEach(c=>{
+    const st=c.students.find(s=>adm?(s.admissionNo||'').trim().toLowerCase()===adm.toLowerCase():(s.name||'').trim().toLowerCase()===name.toLowerCase());
+    if(!st) return; const r=studentRecord(c,st.id,p); if(r.entered) out.push({year:p.year,term:p.term,section:secOf(c),rec:r}); })); return out;
+}
+let SR={q:'',pick:null};
+function pageSearch(){
+  if(!needP()) return;
+  const q=SR.q.trim().toLowerCase(); let results=[];
+  if(q && !SR.pick){ sortClasses(P().classes).forEach(c=>c.students.forEach(s=>{ if((s.name||'').toLowerCase().includes(q)||(s.admissionNo||'').toLowerCase().includes(q)) results.push({...s,className:c.name}); })); results=results.slice(0,40); }
+  let detail='';
+  if(SR.pick){ const hist=findStudentHistory((SR.pick.admissionNo||'').trim(),SR.pick.name.trim()); detail=progressHTML(SR.pick,hist); }
+  view(`<div class="page">${SR.pick||SR.q?`<button class="btn ghost sm" onclick="SR={q:'',pick:null};pageSearch()">← Clear search</button>`:''}
+    <h1 style="margin-top:10px">📈 E-Progress Report</h1><p class="sub">Search a student of ${esc(P().name)} by admission number or name. Progress is shown across every marksheet (term) saved in this browser.</p>
+    <div class="card"><label class="l">Admission No or Name</label><input class="inp" id="sq" value="${esc(SR.q)}" placeholder="e.g. 12345 or Ahamed" oninput="SR.q=this.value;SR.pick=null;pageSearch();const e=document.getElementById('sq');e.focus();e.setSelectionRange(e.value.length,e.value.length)"></div>
+    ${results.length?`<div class="card" style="padding:0">${results.map((r,i)=>`<button style="display:flex;justify-content:space-between;width:100%;border:0;border-bottom:1px solid var(--border);background:#fff;padding:12px 16px;text-align:left" onclick='SR.pick=${esc(JSON.stringify({admissionNo:r.admissionNo,name:r.name}))};pageSearch()'><b>${esc(r.name||'(no name)')}</b><span class="hint">Adm ${esc(r.admissionNo||'-')} · Class ${esc(r.className)}</span></button>`).join('')}</div>`:(q&&!SR.pick?`<div class="card empty">No student found.</div>`:'')}
+    ${detail}</div>`);
+}
+function progressHTML(st,hist){
+  const h=hist[hist.length-1];
+  let html=`<div class="card"><div style="font-size:20px;font-weight:700">${esc(st.name)}</div><div class="hint" style="font-size:13px">Admission No: ${esc(st.admissionNo||'-')} · ${hist.length} term record(s) found</div></div>`;
+  if(!h) return html+`<div class="card empty">No marks entered yet for this student.</div>`;
+  useBands(h.rec.cls,h.rec.prof);
+  html+=`<div class="card"><h3>Term-by-term performance</h3><table class="dt"><thead><tr><th>Year</th><th>Term</th><th>Section</th><th>Class</th><th>Total</th><th>Average</th><th>Rank</th></tr></thead><tbody>`+
+    hist.map(x=>`<tr><td class="p">${x.year}</td><td class="p">${x.term}</td><td class="p">${esc(x.section)}</td><td class="p">${esc(x.rec.className)}</td><td class="p"><b>${x.rec.total}</b></td><td class="p">${x.rec.avg.toFixed(1)}</td><td class="p">${x.rec.rank??'-'} / ${x.rec.classSize}</td></tr>`).join('')+`</tbody></table>
+    ${hist.length>1?`<div style="height:220px;margin-top:12px">${bars(hist.map(x=>({name:`${x.year} ${x.term}`,value:+x.rec.avg.toFixed(1)})),{h:220,rot:false})}</div>`:''}</div>`;
+  const got=h.rec.marks.filter(x=>isMark(x.mark)).map(x=>({name:x.sub,mark:x.mark})); const srt=[...got].sort((a,b)=>b.mark-a.mark); const best=srt.slice(0,3), weak=[...srt].reverse().slice(0,3);
+  const avg=got.length?got.reduce((a,b)=>a+b.mark,0)/got.length:0; const tips=[];
+  weak.filter(x=>x.mark<50).forEach(x=>tips.push(`Extra practice needed in ${x.name} (${x.mark}) — assign weekly revision papers and monitor homework.`));
+  tips.push(avg<40?'Overall average is below 40 — arrange remedial classes and a parent meeting.':avg<60?'Overall average is moderate — set a daily 1-hour study timetable per subject.':'Good overall performance — keep the current study pattern and target A grades in near-miss subjects.');
+  const topB=GB[0]; const near=got.filter(x=>x.mark>=topB.min-7&&x.mark<topB.min); if(near.length) tips.push(`Close to an ${topB.g} grade in ${near.map(x=>x.name).join(', ')} — a small push can raise the grade.`);
+  const ab=h.rec.marks.filter(x=>x.mark===-1).length; if(ab) tips.push(`Absent for ${ab} subject paper(s) — check attendance and arrange a make-up assessment.`);
+  const mains=h.rec.subjects.filter(s=>MAIN_SUBJ.includes(s));
+  html+=`<div class="card"><h3>Subject-wise results — ${h.year} ${h.term} Term (Class ${esc(h.rec.className)})</h3><div class="grid" style="grid-template-columns:1fr 1.3fr"><table class="dt"><thead><tr><th>Subject</th><th>Mark</th><th>Grade</th></tr></thead><tbody>`+
+    h.rec.marks.map(x=>`<tr><td class="p">${esc(x.sub)}</td><td class="p" style="text-align:center">${isMark(x.mark)?x.mark:x.mark===-1?'Ab':'-'}</td><td class="p" style="text-align:center"><b>${isMark(x.mark)?grade(x.mark):'-'}</b></td></tr>`).join('')+
+    `</tbody></table><div style="height:300px">${bars(got.map(x=>({name:x.name,value:x.mark})),{h:300})}</div></div></div>
+    <div class="grid" style="grid-template-columns:1fr 1fr">${mains.length?`<div class="card"><h3>Main subject analysis</h3>${mains.map(s=>{ const m=h.rec.marks.find(x=>x.sub===s)?.mark; return `<div style="display:flex;justify-content:space-between;padding:3px 0"><span>${esc(s)}</span><b>${isMark(m)?`${m} (${grade(m)}) — ${m>=PASS?'Pass':'Needs support'}`:'No mark'}</b></div>`; }).join('')}</div>`:''}
+    <div class="card"><h3>Strengths & weaknesses</h3><p><b style="color:var(--ok)">Best subjects:</b> ${best.map(x=>`${esc(x.name)} (${x.mark})`).join(', ')||'-'}</p><p><b style="color:var(--danger)">Weakest subjects:</b> ${weak.map(x=>`${esc(x.name)} (${x.mark})`).join(', ')||'-'}</p>
+    <p>Average of entered subjects: <b>${avg.toFixed(1)}</b></p><p>Class rank: <b>${h.rec.rank??'-'} / ${h.rec.classSize}</b></p></div></div>
+    <div class="card"><h3>Recommended solutions</h3><ul>${tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>`;
+  return html;
+}
+
+// ---------- Excel backup for any marksheet ----------
+let BK={id:''};
+function pageBackupXls(){
+  const list=[...S.profiles].sort((a,b)=>termOrder(b)-termOrder(a)); const p=S.profiles.find(x=>x.id===BK.id);
+  view(`<div class="page narrow"><button class="btn ghost sm" onclick="RP.mode='home';pageReports()">← Back to Reports</button><h1 style="margin-top:10px">⬇ Get Backup</h1><p class="sub">Choose a marksheet, then save all its classes as one Excel workbook (one sheet per class, with formulas).</p>
+    <div class="card"><label class="l">Marksheet</label><select class="inp" onchange="BK.id=this.value;pageBackupXls()"><option value="">Select</option>${list.map(x=>`<option value="${x.id}" ${x.id===BK.id?'selected':''}>${esc(x.name)}</option>`).join('')}</select>
+    <p class="hint" style="font-size:13px">${!p?'Select a marksheet.':p.classes.length?`${p.classes.length} class(es): ${sortClasses(p.classes).map(c=>esc(c.name)).join(', ')}`:'This marksheet has no classes yet.'}</p>
+    <button class="btn" ${p&&p.classes.length?'':'disabled'} onclick="backupBook()">⬇ Download Excel Backup</button></div></div>`);
+}
+function backupBook(){ const p=S.profiles.find(x=>x.id===BK.id); download(fileSafe(`Backup - ${p.name}.xlsx`), XL.book(sortClasses(p.classes).map(c=>classSheet(c,p)))); toast('Backup downloaded'); }
+
+// =====================================================================
+// 7. PARENT ACCESS (view-only, by admission number)
+// =====================================================================
+function parentReport(adm){
+  const profs = [...S.profiles].sort((a,b)=>(b.id===S.activeId)-(a.id===S.activeId)||termOrder(b)-termOrder(a));
+  for(const prof of profs) for(const c of prof.classes){ const st=filled(c).find(s=>(s.admissionNo||'').trim().toLowerCase()===adm.toLowerCase()); if(!st) continue;
+    return buildParentReport(prof,c,st); }
+  return null;
+}
+function buildParentReport(prof,c,st){ {
+    const sch=computeSchedule(c,prof); const me=sch.rows.find(r=>r.s.id===st.id); const present=sch.rows.filter(r=>r.marks.some(isMark));
+    const rows=sch.subs.map((s,k)=>{ const ms=sch.c.students.map(x=>c.marks[x.id]?.[s]).filter(isMark); const m=me.marks[k];
+      const sr = isMark(m)? 1+ms.filter(v=>v>m).length : null;
+      return {subject:s,mark:m,offered:m!==undefined,grade:isMark(m)?grade(m):'',classAvg:ms.length?(ms.reduce((a,b)=>a+b,0)/ms.length).toFixed(1):null,classBest:ms.length?Math.max(...ms):null,subjectRank:sr?`${sr} / ${ms.length}`:null}; });
+    const got=rows.filter(r=>isMark(r.mark)).sort((a,b)=>b.mark-a.mark); const spread={}; got.forEach(r=>spread[r.grade]=(spread[r.grade]||0)+1);
+    const avg=me.avg; const notes=[];
+    notes.push(avg>=65?'Very good overall performance — keep it up.':avg>=50?'Satisfactory performance — regular revision will lift the grades.':avg>=35?'Average performance — needs a daily study routine and extra practice.':'Needs urgent support — please meet the class teacher.');
+    const ab=rows.filter(r=>r.mark===-1).length; if(ab) notes.push(`Absent for ${ab} paper(s).`);
+    return {prof:{year:prof.year,term:prof.term,name:prof.name},student:{name:st.name,admissionNo:st.admissionNo},className:c.name,classTeacher:c.teacher,total:me.total,avg:avg.toFixed(1),divisor:sch.div,overallGrade:grade(avg),rank:me.rank,rankedCount:present.length,
+      classAverage:(present.length?present.reduce((a,r)=>a+r.avg,0)/present.length:0).toFixed(1),rows,spread,strengths:got.slice(0,3).map(r=>r.subject),weaknesses:got.slice(-3).reverse().filter(r=>r.mark<50).map(r=>r.subject),notes,
+      rows:rows.map(x=>({...x,mark:x.mark===undefined?null:x.mark,offered:x.offered}))}; }
+}
+let PA={q:'',r:undefined};
+function pageParents(standalone){
+  const r=PA.r, sc=S.school;
+  const html = `<div style="min-height:100vh;background:#f1f5f9"><header style="background:var(--primary);color:#fff"><div style="max-width:980px;margin:0 auto;padding:22px 16px;display:flex;gap:12px;align-items:center">${CAP.replace('<svg','<svg width="32" height="32"')}<div><div style="font-size:20px;font-weight:700">Parent Results Portal</div><div style="font-size:12px;opacity:.9">${esc(sc.name||'')} — view your child's marks and progress (read only)</div></div></div></header>
+    <div style="max-width:980px;margin:0 auto;padding:20px 16px">
+    <div class="card"><h3>Search student</h3><form class="row" onsubmit="event.preventDefault();parentSearch(${standalone?'true':'false'})">
+      <input class="inp" id="pq" style="flex:1;min-width:200px" placeholder="Enter student index / admission number" value="${esc(PA.q)}" inputmode="numeric"><button class="btn">🔍 View results</button></form>
+      ${r===null?`<p class="err" style="margin:10px 0 0">No results found for that admission number${standalone?'. Results may not be published yet':''}.</p>`:''}${PA.busy?'<p class="hint">Searching…</p>':''}</div>
+    ${r?`<div class="card"><div class="row" style="justify-content:space-between;align-items:flex-start"><div><div class="hint" style="text-transform:uppercase;letter-spacing:1px">${esc(sc.name)}</div><div style="font-size:24px;font-weight:700">${esc(r.student.name)}</div>
+      <div class="hint" style="font-size:13px">Index No: <b style="color:var(--fg)">${esc(r.student.admissionNo)}</b> · Class <b style="color:var(--fg)">${esc(r.className)}</b>${r.classTeacher?` · Class Teacher: ${esc(r.classTeacher)}`:''}</div></div><span class="badge">${esc(r.prof.year)} — ${esc(r.prof.term)} Term</span></div></div>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr));margin-bottom:16px"><div class="stat"><div class="k">Total Marks</div><div class="v">${r.total}</div></div><div class="stat"><div class="k">Average (÷${r.divisor})</div><div class="v">${r.avg} — ${r.overallGrade}</div></div>
+      <div class="stat"><div class="k">Class Rank</div><div class="v">${r.rank?`${r.rank} of ${r.rankedCount}`:'—'}</div></div><div class="stat"><div class="k">Class Average</div><div class="v">${r.classAverage}</div></div></div>
+      <div class="card" style="padding:0;overflow:auto"><table class="dt"><thead><tr><th>Subject</th><th>Marks</th><th>Grade</th><th>Class Avg</th><th>Class Best</th><th>Subject Rank</th></tr></thead><tbody>`+
+      (r.rows.filter(x=>x.offered||x.mark!==null&&x.mark!==undefined).map(x=>`<tr><td class="p">${esc(x.subject)}</td><td class="p" style="text-align:center"><b>${isMark(x.mark)?x.mark:x.mark===-1?'Ab':'—'}</b></td><td class="p" style="text-align:center">${x.grade||'—'}</td><td class="p" style="text-align:center">${x.classAvg??'—'}</td><td class="p" style="text-align:center">${x.classBest??'—'}</td><td class="p" style="text-align:center">${x.subjectRank??'—'}</td></tr>`).join('')||`<tr><td colspan="6" class="empty">No marks published yet.</td></tr>`)+
+      `</tbody></table></div><div class="grid" style="grid-template-columns:1fr 1fr"><div class="card"><h3>Grade spread</h3>${Object.entries(r.spread).map(([g,n])=>`<span class="badge" style="margin-right:6px;font-size:14px">${g} × ${n}</span>`).join('')||'-'}</div>
+      <div class="card"><h3>Progress notes</h3>${r.strengths.length?`<p><b>Best subjects:</b> ${r.strengths.map(esc).join(', ')}</p>`:''}${r.weaknesses.length?`<p><b>Needs focus:</b> ${r.weaknesses.map(esc).join(', ')}</p>`:''}<ul class="hint" style="font-size:13px">${r.notes.map(n=>`<li>${n}</li>`).join('')}</ul></div></div>
+      <p class="hint" style="text-align:center">This portal is view-only. For corrections please contact the class teacher.</p>`:''}
+    <p style="text-align:center">${standalone?`<a href="#/" class="hint">Staff login</a>`:`<a href="#/marks" class="btn out sm">← Back to marks system</a>`}</p></div></div>`;
+  if(standalone) $('#app').innerHTML = html; else view(accessTabs('parents')+publishCard()+`<div class="page" style="padding-top:0"><h3 style="margin:0 0 8px">Preview the parent portal</h3><div class="hint" style="margin-bottom:8px">This preview searches the open marksheet in your data. Parents see only the published results.</div></div>`+html);
+}
+
+// =====================================================================
+// 8. BACKUP & RESTORE (whole database as JSON)
+// =====================================================================
+function pageData(){
+  const st=S.settings||{}; const n=S.profiles.reduce((a,p)=>a+p.classes.length,0);
+  view(`<div class="page narrow"><h1>💾 Backup & Restore</h1><p class="sub">Your data is saved online in Firebase. Keep extra copies in Google Drive and on this computer.</p>
+    <div class="card"><h3>Google Drive backup</h3>
+      ${OAUTH_CLIENT_ID?`<p class="hint" style="font-size:13px">Saves a backup file and one Excel workbook per marksheet into the folder <b>BCC Marks Backups</b> in your Google Drive.${st.lastDriveBackup?` Last backup: <b>${new Date(st.lastDriveBackup).toLocaleString()}</b>.`:''}</p>
+      <div class="row"><button class="btn" id="gdB" onclick="backupToDrive()">☁ Back up to Google Drive now</button><button class="btn out" onclick="driveRestoreList()">Restore from Google Drive…</button></div><div id="gdOut" class="hint" style="margin-top:8px"></div>`
+      :`<p class="hint">Google Drive backup is not set up yet.</p>`}</div>
+    <div class="card"><h3>Backup file on this computer</h3><p class="hint" style="font-size:13px">${S.profiles.length} marksheet(s) · ${n} class(es)</p>
+      <button class="btn out" onclick="download('marks-schedule-backup-'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify(backupObject()),'application/json');toast('Backup downloaded')">⬇ Download backup (.json)</button></div>
+    <div class="card"><h3>Restore / import a backup file</h3><p class="hint" style="font-size:13px">Use this to bring in data from the offline version of the app, or to go back to an earlier backup. It <b>replaces all online data</b>.</p><input type="file" accept=".json,application/json" onchange="restoreFile(this.files[0])"></div>
+    <div class="card"><h3>Try with sample data</h3><p class="hint" style="font-size:13px">Adds demo marksheets for 1st and 2nd Term 2026 (skipped if you already have them) with classes 4A (Primary), 6A and 6B (Secondary), 10A (Senior Secondary) and 12 Bio (A.L). They are saved online like real data.</p><button class="btn out" onclick="loadDemo()">Load demo marksheets</button></div></div>`);
+  if(OAUTH_CLIENT_ID) loadGIS().catch(()=>{});
+}
+const backupObject = () => ({app:'bcc-marks',v:3,at:Date.now(),school:{name:S.school.name,logo:S.school.logo},settings:S.settings,profiles:S.profiles});
+function restoreFile(f){ if(!f) return; const r=new FileReader(); r.onload=()=>{ let d; try{ d=JSON.parse(r.result); }catch(e){ return toast('That file is not a valid backup','err'); } confirmRestore(d); }; r.readAsText(f); }
+function confirmRestore(d){
+  try{ if(!d.profiles && d.profile){ localStorage.setItem('bcc-marks-v1',JSON.stringify(d)); d=migrateV1(); } d=normalise(d); if(!d||!Array.isArray(d.profiles)) throw 0; }catch(e){ return toast('That file is not a valid backup','err'); }
+  const n=d.profiles.reduce((a,p)=>a+(p.classes||[]).length,0);
+  window.__restore=d;
+  modal(`<h2>Replace all online data?</h2><p style="font-size:14px">The backup has <b>${d.profiles.length}</b> marksheet(s) and <b>${n}</b> class(es). Everything now online (${S.profiles.length} marksheet(s)) will be replaced, and existing teacher links will stop working.</p>
+    <div class="foot"><button class="btn out" onclick="closeModal()">Cancel</button><button class="btn danger" onclick="applyRestore()">Replace online data</button></div>`,'smm');
+}
+function applyRestore(){ const d=window.__restore; closeModal();
+  d.profiles.forEach(p=>{ p.classes=(p.classes||[]).map(c=>{ const x={...c}; delete x.access; return x; }); });
+  S.profiles.forEach(p=>p.classes.forEach(c=>{ if(c.access) ADB.del('linkTokens/'+c.access.token).catch(()=>{}); }));
+  if(d.school){ S.school.name=d.school.name||S.school.name; S.school.logo=d.school.logo||S.school.logo; }
+  S.settings={...(S.settings||{}),...(d.settings||{})}; S.profiles=d.profiles; S.activeId=(d.profiles.find(p=>p.id===d.activeId)||d.profiles[0]||{}).id||null;
+  save(); toast('Backup restored — uploading to the online database'); location.hash='#/'; route(); }
+function loadDemo(){
+  const names=['Ahamed Rizan','Fathima Sanha','Mohamed Aasif','Aysha Rifka','Ifham Ahamed','Nuha Nazeer','Rashid Ali','Zainab Hana','Hisham Faiz','Amna Rafeek','Sajid Hameed','Rifa Nawas','Ilham Rauf','Shifa Mubarak','Akram Haneef','Hafsa Riyas','Nabeel Saleem','Minha Farook','Usama Jabir','Rukaiya Basheer'];
+  const secSubs=[...SUGGEST.Secondary,'Commerce','ICT'];
+  const senior=['Religion','Tamil Lang','Mathematics','English','Science','History','Sinhala','Commerce','ICT'];
+  const priSubs=SUGGEST.Primary, alSubs=['Biology','Chemistry','Physics','Combined Maths','General English','G.I.T'];
+  const mk=(nm,teacher,base,seed,subs,admBase,all)=>{ const c={id:uid(),name:nm,teacher,students:[],marks:{},subjectTeachers:{},subjects:subs.length===all.length?null:subs}; let x=seed;
+    const rnd=()=>{x=(x*9301+49297)%233280;return x/233280;};
+    names.forEach((n,i)=>{ const st={id:uid(),no:i+1,admissionNo:String(admBase+i+1),name:n}; c.students.push(st); c.marks[st.id]={}; const ab=rnd();
+      subs.forEach(s=>{ if(ab<.04){c.marks[st.id][s]=-1;return;} c.marks[st.id][s]=Math.max(3,Math.min(99,Math.round(base+(rnd()-.5)*70-i*.8))); }); });
+    subs.forEach(s=>c.subjectTeachers[s]='Mr./Mrs. '+s.split(' ')[0]); return c; };
+  const mkP=(term,shift)=>({id:uid(),year:'2026',term,name:profName('2026',term),created:Date.now(),
+    sections:{'Primary':{subjects:priSubs,div:{all:null}},'Secondary':{subjects:SUGGEST.Secondary,div:{all:12}},'Senior Secondary':{subjects:SUGGEST['Senior Secondary'],div:{all:9}},'A.L':{subjects:alSubs,div:{all:null}}},
+    classes:sortClasses([mk('4A','Mrs. F. Rinoza',60+shift,41+shift,priSubs,4100,priSubs),mk('6A','Mrs. M.A.F. Risna',56+shift,61+shift,SUGGEST.Secondary,6100,SUGGEST.Secondary),mk('6B','Mr. A. Imran',51+shift,62+shift,SUGGEST.Secondary,6200,SUGGEST.Secondary),
+      mk('10A','Mrs. S. Fareena',55+shift,101+shift,senior,1000,SUGGEST['Senior Secondary']),mk('12 Bio','Mr. M. Nazeer',52+shift,121+shift,['Biology','Chemistry','Physics','General English'],1200,alSubs)])});
+  const added=[];
+  [['1st',0],['2nd',4]].forEach(([t,sh])=>{ if(S.profiles.some(p=>p.year==='2026'&&p.term===t)) return; const p=mkP(t,sh); S.profiles.push(p); added.push(p); });
+  if(!added.length) return toast('Demo not added: you already have 1st and 2nd Term 2026 marksheets.','err');
+  if(!S.school.name) S.school.name='Kg/Baduriya Central College - Mawanella';
+  S.activeId=added[added.length-1].id; save(); toast('Demo marksheets loaded — saving online'); location.hash='#/marks';
+}
+
+// =====================================================================
+// ONLINE — Firebase connection, sync engine, start-up
+// =====================================================================
+const FIREBASE_CONFIG = {"apiKey": "AIzaSyA63L45WFSCOHB_BCgQnJexanIblqCsqnI", "authDomain": "bcc-marks.firebaseapp.com", "projectId": "bcc-marks", "storageBucket": "bcc-marks.firebasestorage.app", "messagingSenderId": "283005560674", "appId": "1:283005560674:web:6764e8f80b3508ec966e3b"};
+const OAUTH_CLIENT_ID = '283005560674-7dqhoneol2io0vtcv0mdsh3gaptq29eb.apps.googleusercontent.com';                 // Google Drive backups (OAuth Web client ID)
+const ADMIN_USER = 'bcc123';
+const adminEmail = u => `${String(u).trim().toLowerCase()}@bccmarks.app`;
+const MOCK = /[?&]mock=1/.test(location.search);   // local testing without Firebase
+const DEL = {__del:true};
+const ONLINE = {ready:false, admin:false};
+let ADB=null, TDB=null;                       // admin/public database, teacher database
+const clone = o => o==null ? o : JSON.parse(JSON.stringify(o));
+const sortKeys = o => Array.isArray(o) ? o.map(sortKeys) : (o && typeof o==='object') ? Object.keys(o).sort().reduce((a,k)=>(a[k]=sortKeys(o[k]),a),{}) : o;
+const sj = o => JSON.stringify(sortKeys(clone(o)));
+function setPath(o,f,v){ let t=o; for(let i=0;i<f.length-1;i++){ if(typeof t[f[i]]!=='object'||t[f[i]]===null) t[f[i]]={}; t=t[f[i]]; } const k=f[f.length-1]; if(v===DEL) delete t[k]; else t[k]=clone(v); }
+
+function waitFBX(){ return new Promise(res=>{ if(window.FBX||window.FBX_ERROR) return res(); window.addEventListener('fbx-ready',()=>res(),{once:true}); }); }
+function makeDB(name){ return MOCK ? mockDB(name) : fbDB(name); }
+function fbDB(name){
+  const F=window.FBX; const app=F.initializeApp(FIREBASE_CONFIG,name);
+  let db; try{ db=F.initializeFirestore(app,{localCache:F.persistentLocalCache({tabManager:F.persistentMultipleTabManager()})}); }catch(e){ db=F.initializeFirestore(app,{}); }
+  const auth=F.getAuth(app); let rdy; const ready=new Promise(r=>rdy=r); F.onAuthStateChanged(auth,u=>rdy(u));
+  const ref=p=>F.doc(db,p), conv=v=>v===DEL?F.deleteField():v;
+  return { currentUser:()=>auth.currentUser, authReady:()=>ready,
+    signIn:(e,p)=>F.signInWithEmailAndPassword(auth,e,p), signUp:(e,p)=>F.createUserWithEmailAndPassword(auth,e,p),
+    signInAnon:()=>F.signInAnonymously(auth), signOut:()=>F.signOut(auth),
+    get:async p=>{ const x=await F.getDoc(ref(p)); return x.exists()?x.data():null; },
+    list:async p=>{ const x=await F.getDocs(F.collection(db,p)); return x.docs.map(d=>({id:d.id,data:d.data()})); },
+    set:(p,d)=>F.setDoc(ref(p),d),
+    update:(p,pairs)=>{ const a=[]; pairs.forEach(([f,v])=>a.push(new F.FieldPath(...f),conv(v))); return F.updateDoc(ref(p),...a); },
+    del:p=>F.deleteDoc(ref(p)),
+    batch:async ops=>{ for(let i=0;i<ops.length;i+=400){ const b=F.writeBatch(db); ops.slice(i,i+400).forEach(([k,p,d])=>k==='set'?b.set(ref(p),d):b.delete(ref(p))); await b.commit(); } },
+    watchCol:(p,cb,err)=>F.onSnapshot(F.collection(db,p),x=>cb(x.docChanges().map(c=>({type:c.type,id:c.doc.id,data:c.doc.data(),local:c.doc.metadata.hasPendingWrites}))),e=>{ console.error(p,e); err&&err(e); }),
+    watchDoc:(p,cb,err)=>F.onSnapshot(ref(p),x=>cb(x.exists()?x.data():null,x.metadata.hasPendingWrites),e=>{ console.error(p,e); err&&err(e); })
+  };
+}
+// In-browser stand-in for Firestore, used only with ?mock=1 for offline testing.
+function mockDB(name){
+  const KD='mockdb', subs=[]; const ch=('BroadcastChannel' in window)?new BroadcastChannel('mockdb'):null;
+  const all=()=>{ try{ return JSON.parse(localStorage.getItem(KD))||{}; }catch(e){ return {}; } };
+  const notify=p=>subs.slice().forEach(x=>x(p)); if(ch) ch.onmessage=e=>notify(e.data); window.addEventListener('storage',e=>{ if(e.key===KD) notify('*'); });
+  const write=(p,fn)=>{ const m=all(); const v=fn(m[p]); if(v===undefined) delete m[p]; else m[p]=v; localStorage.setItem(KD,JSON.stringify(m)); setTimeout(()=>{ notify(p); ch&&ch.postMessage(p); },0); return Promise.resolve(); };
+  const inCol=(k,p)=>k.startsWith(p+'/')&&!k.slice(p.length+1).includes('/');
+  const AK='mockauth-'+name; let user=null; try{ user=JSON.parse(sessionStorage.getItem(AK)||localStorage.getItem(AK)); }catch(e){}
+  const setUser=u=>{ user=u; localStorage.setItem(AK,JSON.stringify(u)); };
+  const users=()=>JSON.parse(localStorage.getItem('mockusers')||'{}');
+  return { currentUser:()=>user, authReady:()=>Promise.resolve(user),
+    signIn:(e,p)=>{ const u=users()[e]; if(!u||u.p!==p) return Promise.reject({code:'auth/invalid-credential'}); setUser({uid:u.uid,email:e}); return Promise.resolve(); },
+    signUp:(e,p)=>{ const us=users(); if(us[e]) return Promise.reject({code:'auth/email-already-in-use'}); us[e]={p,uid:'u'+uid()}; localStorage.setItem('mockusers',JSON.stringify(us)); setUser({uid:us[e].uid,email:e}); return Promise.resolve(); },
+    signInAnon:()=>{ setUser({uid:'a'+uid(),email:null}); return Promise.resolve(); }, signOut:()=>{ setUser(null); return Promise.resolve(); },
+    get:p=>Promise.resolve(clone(all()[p]??null)),
+    list:p=>Promise.resolve(Object.entries(all()).filter(([k])=>inCol(k,p)).map(([k,v])=>({id:k.slice(p.length+1),data:clone(v)}))),
+    set:(p,d)=>write(p,()=>clone(d)),
+    update:(p,pairs)=>write(p,o=>{ o=clone(o||{}); pairs.forEach(([f,v])=>setPath(o,f,v)); return o; }),
+    del:p=>write(p,()=>undefined),
+    batch:ops=>{ ops.forEach(([k,p,d])=>k==='set'?write(p,()=>clone(d)):write(p,()=>undefined)); return Promise.resolve(); },
+    watchCol:(p,cb)=>{ let seen={}; const f=path=>{ if(path&&path!=='*'&&!inCol(path,p)) return; const now={}; Object.entries(all()).forEach(([k,v])=>{ if(inCol(k,p)) now[k.slice(p.length+1)]=JSON.stringify(v); });
+        const out=[]; Object.keys(now).forEach(id=>{ if(seen[id]!==now[id]) out.push({type:seen[id]?'modified':'added',id,data:JSON.parse(now[id]),local:false}); });
+        Object.keys(seen).forEach(id=>{ if(!(id in now)) out.push({type:'removed',id,data:null,local:false}); }); seen=now; if(out.length||path===null) cb(out); };
+      subs.push(f); setTimeout(()=>f(null),0); return ()=>{ const i=subs.indexOf(f); if(i>=0) subs.splice(i,1); }; },
+    watchDoc:(p,cb)=>{ let last; const f=path=>{ if(path&&path!=='*'&&path!==p) return; const v=all()[p]; const js=JSON.stringify(v??null); if(js!==last){ last=js; cb(v?clone(v):null,false); } };
+      subs.push(f); setTimeout(()=>f(null),0); return ()=>{ const i=subs.indexOf(f); if(i>=0) subs.splice(i,1); }; }
+  };
+}
+
+// ---------- document shapes ----------
+const classDoc = c => clone({name:c.name,teacher:c.teacher||'',students:c.students||[],marks:c.marks||{},subjectTeachers:c.subjectTeachers||{},subjects:c.subjects||null,
+  contact:c.contact||null,access:c.access||null,updatedAt:c.updatedAt||null,updatedBy:c.updatedBy||null});
+const sheetDoc = p => clone({year:p.year,term:p.term,name:p.name,sections:p.sections||{},created:p.created||0});
+const schoolDoc = () => clone({name:S.school.name||'',logo:S.school.logo||'',settings:S.settings||{},publishedPid:S.school.publishedPid||null,publishedAt:S.school.publishedAt||null});
+const isClassPath = k => /^marksheets\/[^/]+\/classes\/[^/]+$/.test(k);
+function localDocs(){
+  const m={};
+  if(MODE==='teacher'){ const p=S.profiles[0], c=p.classes[0]; m[`marksheets/${p.id}/classes/${c.id}`]=classDoc(c); return m; }
+  m['school/main']=schoolDoc();
+  S.profiles.forEach(p=>{ m[`marksheets/${p.id}`]=sheetDoc(p); p.classes.forEach(c=>{ m[`marksheets/${p.id}/classes/${c.id}`]=classDoc(c); }); });
+  return m;
+}
+function localDocJSON(k){
+  if(k==='school/main') return sj(schoolDoc());
+  const a=k.split('/'); const p=S.profiles.find(x=>x.id===a[1]); if(!p) return undefined;
+  if(a.length===2) return sj(sheetDoc(p));
+  const c=p.classes.find(x=>x.id===a[3]); return c?sj(classDoc(c)):undefined;
+}
+function setLocalDoc(k,d){
+  if(k==='school/main'){ if(!d) return; S.school.name=d.name||''; S.school.logo=d.logo||''; S.settings=d.settings||{}; S.school.publishedPid=d.publishedPid||null; S.school.publishedAt=d.publishedAt||null; return; }
+  const a=k.split('/'); let p=S.profiles.find(x=>x.id===a[1]);
+  if(a.length===2){
+    if(!d){ S.profiles=S.profiles.filter(x=>x.id!==a[1]); if(S.activeId===a[1]) S.activeId=null; return; }
+    if(!p){ p={id:a[1],classes:[]}; S.profiles.push(p); }
+    Object.assign(p,{year:d.year,term:d.term,name:d.name,sections:d.sections||{},created:d.created||0}); return;
+  }
+  if(!p){ if(!d) return; p={id:a[1],year:'',term:'',name:'',sections:{},classes:[]}; S.profiles.push(p); }
+  const i=p.classes.findIndex(x=>x.id===a[3]);
+  if(!d){ if(i>=0) p.classes.splice(i,1); return; }
+  const obj={id:a[3],...clone(d)}; if(i>=0) p.classes[i]=obj; else p.classes.push(obj);
+  p.classes=sortClasses(p.classes);
+}
+
+// ---------- sync engine ----------
+const SY={db:null,last:{},timer:null,pending:0,err:null,unsubs:[]};
+function diffPairs(a,b){ const pairs=[]; a=a||{}; b=b||{};
+  new Set([...Object.keys(a),...Object.keys(b)]).forEach(k=>{ if(k==='marks') return; if(sj(a[k])!==sj(b[k])) pairs.push([[k], b[k]===undefined?DEL:b[k]]); });
+  const am=a.marks||{}, bm=b.marks||{};
+  new Set([...Object.keys(am),...Object.keys(bm)]).forEach(sid=>{
+    if(!(sid in bm)) return pairs.push([['marks',sid],DEL]);
+    if(!(sid in am)) return pairs.push([['marks',sid],bm[sid]]);
+    const x=am[sid]||{}, y=bm[sid]||{};
+    new Set([...Object.keys(x),...Object.keys(y)]).forEach(sub=>{ if(x[sub]!==y[sub]) pairs.push([['marks',sid,sub], sub in y?y[sub]:DEL]); });
+  });
+  return pairs; }
+function queueSync(){ if(!SY.db) return; clearTimeout(SY.timer); SY.timer=setTimeout(flush,450); setSync(); }
+function flush(){
+  clearTimeout(SY.timer); SY.timer=null; if(!SY.db) return;
+  if(MODE==='teacher'){ const c=S.profiles[0].classes[0], k=`marksheets/${S.profiles[0].id}/classes/${c.id}`;
+    if(SY.last[k]!==undefined && sj(classDoc(c))!==SY.last[k]){ c.updatedAt=Date.now(); c.updatedBy=c.teacher||'Class teacher'; } }
+  const now=localDocs(), ops=[];
+  Object.entries(now).forEach(([k,d])=>{ const js=sj(d); if(SY.last[k]===js) return;
+    if(SY.last[k]===undefined || !isClassPath(k)) ops.push(['set',k,d,js]);
+    else { const pairs=diffPairs(JSON.parse(SY.last[k]),d); if(!pairs.length){ SY.last[k]=js; return; } ops.push(pairs.length>300?['set',k,d,js]:['update',k,pairs,js]); } });
+  if(MODE!=='teacher') Object.keys(SY.last).forEach(k=>{ if(!(k in now)) ops.push(['del',k]); });
+  ops.forEach(([kind,k,d,js])=>{
+    if(kind==='del') delete SY.last[k]; else SY.last[k]=js;
+    SY.pending++;
+    const pr = kind==='set'?SY.db.set(k,d) : kind==='update'?SY.db.update(k,d) : SY.db.del(k);
+    pr.then(()=>{ SY.pending--; SY.err=null; setSync(); })
+      .catch(e=>{ SY.pending--; SY.err=e; console.error('sync',kind,k,e); if(kind!=='del') delete SY.last[k]; setSync(); syncError(e); });
+  });
+  setSync();
+}
+function flushNow(){ if(SY.timer) flush(); return new Promise(res=>{ const t0=Date.now(); const w=()=>{ if(SY.pending<=0||Date.now()-t0>4000) return res(); setTimeout(w,150); }; w(); }); }
+let LASTERR=0;
+function syncError(e){ if(Date.now()-LASTERR<5000) return; LASTERR=Date.now(); const c=(e&&e.code)||'';
+  toast(/permission/.test(c) ? (MODE==='teacher'?'Not saved: your access to this class has been removed. Ask the admin for a new link.':'Not saved: permission denied. Sign out and sign in again.') : 'Not saved yet — will retry. Check your internet connection.','err'); }
+function setSync(){ const el=$('#sync'); if(!el) return;
+  const busy=SY.pending>0||SY.timer;
+  el.innerHTML = !navigator.onLine ? '<span style="color:#b45309">● Offline — changes will upload when you are back online</span>'
+    : SY.err&&!busy ? '<span style="color:var(--danger)">● Some changes were not saved</span>'
+    : busy ? '● Saving…' : '<span style="color:var(--ok)">● All changes saved online</span>'; }
+window.addEventListener('online',setSync); window.addEventListener('offline',setSync);
+window.addEventListener('beforeunload',e=>{ if(SY.timer) flush(); if(SY.pending>0){ e.preventDefault(); e.returnValue=''; } });
+// A change arrived from the server (another device, a teacher, or the admin).
+function onRemote(k,data){
+  const js = data==null ? undefined : sj(data);
+  if(SY.last[k]===js) return false;
+  const base=SY.last[k], localNow=localDocJSON(k);
+  let merged = data==null ? null : clone(data), rebased=false;
+  if(merged && isClassPath(k) && base!==undefined && localNow!==undefined && localNow!==base){   // keep edits not yet uploaded
+    diffPairs(JSON.parse(base),JSON.parse(localNow)).forEach(([f,v])=>setPath(merged,f,v)); rebased=true; }
+  if(js===undefined) delete SY.last[k]; else SY.last[k]=js;
+  setLocalDoc(k,merged);
+  if(rebased) queueSync();
+  return true;
+}
+let RR=null;
+function remoteRefresh(){ clearTimeout(RR); RR=setTimeout(()=>{
+  if(!ONLINE.ready || (MODE==='admin'&&!authed())) return;
+  if($('#modal').innerHTML.trim()) return;                    // a form or the slide show is open: leave it alone
+  const ae=document.activeElement; if(ae && /INPUT|TEXTAREA|SELECT/.test(ae.tagName) && !$('#mkBody')?.contains(ae)) return;
+  shell(); const h=location.hash||'#/';
+  if(h.startsWith('#/marks')){ if(MK.mode==='subject') return refreshMarkInputs(); return pageMarks(); }
+  if(h.startsWith('#/classes')) return pageClasses();
+  if(h.startsWith('#/print')&&PR.mode==='list') return pagePrint();
+  if(h.startsWith('#/access/teachers')) return pageTeacherAccess();
+  if(h==='#/'||h==='') return pageSetup();
+},350); }
+function refreshMarkInputs(){ const c=getClass(MK.cid); if(!c) return; useBands(c);
+  document.querySelectorAll('#mkBody input[data-i]').forEach(inp=>{ const st=c.students[+inp.dataset.i]; if(!st) return; const v=c.marks[st.id]?.[MK.sub];
+    if(document.activeElement!==inp) inp.value = v===-1?'Ab':v??''; const g=$('#g'+inp.dataset.i); if(g) g.textContent=cellText(v)||'-'; }); }
+
+function showLoading(msg){ $('#app').innerHTML=`<div class="login"><div class="card" style="text-align:center">${CAP.replace('<svg','<svg width="40" height="40"')}<div style="font-weight:600;margin-top:10px">${esc(msg)}</div><div class="hint" style="margin-top:6px">Please wait…</div></div></div>`; }
+function fatal(msg){ $('#app').innerHTML=`<div class="login"><div class="card"><h3>Cannot open the marks system</h3><p class="err">${esc(msg)}</p><button class="btn" onclick="location.reload()">Try again</button></div></div>`; }
+
+// ---------- admin data ----------
+async function startAdmin(){
+  ONLINE.admin=true; MODE='admin'; showLoading('Loading school data…');
+  SY.unsubs.forEach(u=>{ try{u();}catch(e){} }); SY.unsubs=[]; SY.db=ADB; SY.last={};
+  await new Promise(res=>{
+    let pending=2; const done=()=>{ if(--pending===0) res(); }; const subs={};
+    SY.unsubs.push(ADB.watchDoc('school/main',(d,local)=>{ if(local) return; const ch=onRemote('school/main',d); if(pending>0&&!subs.__s){ subs.__s=1; done(); } else if(ch) remoteRefresh(); }, ()=>done()));
+    let first=true;
+    SY.unsubs.push(ADB.watchCol('marksheets',chs=>{
+      chs.forEach(x=>{ const k='marksheets/'+x.id;
+        if(!x.local) onRemote(k, x.type==='removed'?null:x.data);
+        if(x.type==='removed'){ if(subs[x.id]){ subs[x.id](); delete subs[x.id]; } Object.keys(SY.last).forEach(kk=>{ if(kk.startsWith(k+'/')) delete SY.last[kk]; }); return; }
+        if(!subs[x.id]){ if(first) pending++; let f=true;
+          subs[x.id]=ADB.watchCol(k+'/classes',cc=>{ let ch=false; cc.forEach(y=>{ if(y.local) return; ch=onRemote(k+'/classes/'+y.id, y.type==='removed'?null:y.data)||ch; });
+            if(f){ f=false; if(pending>0) done(); else if(ch) remoteRefresh(); } else if(ch) remoteRefresh(); }, ()=>{ if(f){ f=false; if(pending>0) done(); } });
+          SY.unsubs.push(()=>subs[x.id]&&subs[x.id]()); } });
+      if(first){ first=false; done(); } else remoteRefresh();
+    }, e=>{ fatal('Could not read the database: '+((e&&e.code)||e)); }));
+  });
+  const a=localStorage.getItem('bcc-active'); S.activeId = S.profiles.some(p=>p.id===a) ? a : (S.profiles.some(p=>p.id===S.activeId)?S.activeId:null);
+}
+
+// ---------- start-up ----------
+async function boot(){
+  showLoading('Connecting…');
+  if(!MOCK){ await waitFBX(); if(window.FBX_ERROR||!window.FBX) return fatal('Could not load Firebase. Check your internet connection.'); }
+  ADB=makeDB('admin');
+  try{ const sc=await ADB.get('school/main'); if(sc){ S.school.name=sc.name||''; S.school.logo=sc.logo||''; S.school.publishedPid=sc.publishedPid||null; S.school.publishedAt=sc.publishedAt||null; } }catch(e){}
+  const h=location.hash||'';
+  if(h.startsWith('#/t/')){ ONLINE.ready=true; return openTeacherLink(h); }
+  let tm=null; try{ tm=sessionStorage.getItem('bcc-tmode'); }catch(e){}
+  if(tm && h!=='#/parent'){ ONLINE.ready=true; return openTeacherLink(tm); }
+  const u=await ADB.authReady();
+  if(u && u.email===adminEmail(ADMIN_USER) && h!=='#/parent'){ try{ await startAdmin(); }catch(e){ return fatal(String(e&&e.message||e)); } }
+  ONLINE.ready=true; route();
+}
+
+// =====================================================================
+// 9. ACCESS — Parent Access + Teacher Access (online)
+// =====================================================================
+function accessTabs(on){
+  return `<div class="page" style="padding-bottom:0"><h1>🔑 Access</h1><p class="sub">Publish results for parents, and give each class teacher a private link to their own class.</p>
+    <div class="row" style="gap:8px"><a class="btn ${on==='parents'?'':'out'}" href="#/access/parents">👪 Parent Access</a><a class="btn ${on==='teachers'?'':'out'}" href="#/access/teachers">🧑‍🏫 Teacher Access</a></div></div>`;
+}
+const newToken = () => Array.from(crypto.getRandomValues(new Uint8Array(16)),b=>b.toString(16).padStart(2,'0')).join('');
+const appBase = () => location.href.split('#')[0].split('?')[0] + (MOCK?'?mock=1':'');
+const waNum = p => { let d=String(p||'').replace(/\D/g,''); if(d.length===10&&d[0]==='0') d='94'+d.slice(1); return d; };
+function copyText(t){ const done=()=>toast('Copied — paste it into WhatsApp, SMS or email');
+  if(navigator.clipboard&&navigator.clipboard.writeText) return navigator.clipboard.writeText(t).then(done,()=>fallback()); fallback();
+  function fallback(){ const a=document.createElement('textarea'); a.value=t; document.body.appendChild(a); a.select(); try{document.execCommand('copy'); done();}catch(e){ toast('Copy failed — select and copy manually','err'); } a.remove(); } }
+
+// ---- ADMIN: Teacher Access ----
+let TA={year:null,term:null};
+const teacherLink = c => `${appBase()}#/t/${c.access.token}`;
+function pageTeacherAccess(){
+  const act=P(); if(TA.year===null){ TA.year=act?act.year:YEARS[1]; TA.term=act?act.term:'1st'; }
+  const p=S.profiles.find(x=>x.year===TA.year&&x.term===TA.term);
+  view(accessTabs('teachers')+`<div class="page">
+    <div class="card"><h3>1. Choose year and term</h3><div class="row">
+      <div><label class="l">Year</label><select class="inp" onchange="TA.year=this.value;pageTeacherAccess()">${YEARS.map(y=>`<option ${y===TA.year?'selected':''}>${y}</option>`).join('')}</select></div>
+      <div><label class="l">Term</label><select class="inp" onchange="TA.term=this.value;pageTeacherAccess()">${TERMS.map(t=>`<option value="${t}" ${t===TA.term?'selected':''}>${t} Term</option>`).join('')}</select></div>
+      <div class="hint" style="flex:1;min-width:220px">${p?`Marksheet: <b>${esc(p.name)}</b> · ${p.classes.length} class(es)`:'No marksheet for this year and term. Create one in Setup Profile.'}</div></div></div>
+    <div class="card"><h3>2. Class teacher links</h3>
+      <div class="hint" style="margin-bottom:10px">Each link opens <b>only that class</b>. The teacher can edit its students and marks, and print its A3 sheet. Their marks are <b>saved online as they type</b> and appear here automatically. <b>⟳ New</b> makes a new link and switches the old one off.</div>
+      ${!p||!p.classes.length?'<div class="empty" style="padding:24px">No classes in this marksheet.</div>':
+      `<div class="scroll" style="max-height:none"><table class="dt"><thead><tr><th>Class</th><th>Class Teacher</th><th style="width:150px">WhatsApp no.</th><th style="width:190px">Email</th><th>Status</th><th style="width:330px">Send private link</th></tr></thead><tbody>`+
+      sortClasses(p.classes).map(c=>{ const a=c.access, ct=c.contact||{};
+        return `<tr><td class="p"><b>${esc(c.name)}</b><div class="hint">${esc(secOf(c)||'')}</div></td><td class="p">${esc(c.teacher||'—')}</td>
+          <td><input value="${esc(ct.phone||'')}" placeholder="07X…" onchange="taContact('${p.id}','${c.id}','phone',this.value)"></td>
+          <td><input value="${esc(ct.email||'')}" placeholder="name@mail.com" onchange="taContact('${p.id}','${c.id}','email',this.value)"></td>
+          <td class="p" style="font-size:12px">${a?`<span class="badge" style="background:#dcfce7">Active</span><div class="hint">since ${new Date(a.created).toLocaleDateString()}</div>`:'<span class="hint">No link yet</span>'}${c.updatedAt?`<div class="hint">last edit ${new Date(c.updatedAt).toLocaleString()}${c.updatedBy?` by ${esc(c.updatedBy)}`:''}</div>`:''}</td>
+          <td class="p">${a?`<div class="row" style="gap:6px"><button class="btn sm" onclick="taSend('${p.id}','${c.id}','wa')">WhatsApp</button><button class="btn sm out" onclick="taSend('${p.id}','${c.id}','mail')">Email</button><button class="btn sm out" onclick="taSend('${p.id}','${c.id}','copy')">Copy</button>
+            <button class="btn sm ghost" title="Make a new link and switch the old one off" onclick="taNew('${p.id}','${c.id}')">⟳ New</button><button class="btn sm ghost" title="Remove access" onclick="taRemove('${p.id}','${c.id}')">✕</button></div>`
+            :`<button class="btn sm" onclick="taNew('${p.id}','${c.id}')">＋ Create link</button>`}</td></tr>`; }).join('')+`</tbody></table></div>`}
+    </div></div>`);
+}
+const findClass = (pid,cid) => S.profiles.find(x=>x.id===pid).classes.find(x=>x.id===cid);
+function taContact(pid,cid,k,v){ const c=findClass(pid,cid); c.contact={...(c.contact||{}),[k]:v.trim()}; save(); }
+async function taNew(pid,cid){ const c=findClass(pid,cid); const old=c.access&&c.access.token; const token=newToken();
+  try{ await ADB.set('linkTokens/'+token,{pid,cid,created:Date.now()}); if(old) await ADB.del('linkTokens/'+old); }
+  catch(e){ return toast('Could not create the link: '+((e&&e.code)||e),'err'); }
+  c.access={token,created:Date.now()}; save(); toast(old?`New link for ${c.name} — the old link no longer works`:`Link created for ${c.name}`); pageTeacherAccess(); }
+function taRemove(pid,cid){ const c=findClass(pid,cid);
+  modal(`<h2>Remove ${esc(c.name)} teacher access?</h2><p class="hint" style="font-size:14px">The teacher's link will stop working straight away. You can create a new link later.</p><div class="foot"><button class="btn out" onclick="closeModal()">Cancel</button><button class="btn danger" onclick="taRemoveGo('${pid}','${cid}')">Remove</button></div>`,'smm'); }
+async function taRemoveGo(pid,cid){ const c=findClass(pid,cid); closeModal(); try{ if(c.access) await ADB.del('linkTokens/'+c.access.token); }catch(e){ return toast('Could not remove access: '+((e&&e.code)||e),'err'); }
+  delete c.access; save(); toast('Access removed'); pageTeacherAccess(); }
+function taSend(pid,cid,how){ const p=S.profiles.find(x=>x.id===pid), c=findClass(pid,cid), link=teacherLink(c);
+  const msg=`Dear ${c.teacher||'Class Teacher'},\n\nThis is your private link to the ${S.school.name||'school'} marks system for Class ${c.name} — ${p.name}.\n\n${link}\n\nOpen it on your phone or computer. It shows only Class ${c.name}: you can update student names and enter marks. Everything is saved online automatically as you type.\n\nPlease do not share this link with anyone.`;
+  const ct=c.contact||{};
+  if(how==='wa') window.open(`https://wa.me/${waNum(ct.phone)}?text=${encodeURIComponent(msg)}`,'_blank');
+  else if(how==='mail') location.href=`mailto:${encodeURIComponent(ct.email||'')}?subject=${encodeURIComponent(`Marks entry link — Class ${c.name} — ${p.name}`)}&body=${encodeURIComponent(msg)}`;
+  else copyText(msg);
+}
+
+// ---- ADMIN: publish results for parents ----
+const admKey = a => String(a||'').trim().toLowerCase().replace(/[^a-z0-9_-]/g,'_');
+let PUB={pid:null,busy:false};
+function publishCard(){
+  const list=[...S.profiles].sort((a,b)=>termOrder(b)-termOrder(a)); if(PUB.pid===null) PUB.pid=S.school.publishedPid||S.activeId||'';
+  const pub=S.profiles.find(p=>p.id===S.school.publishedPid); const link=`${appBase()}#/parent`;
+  return `<div class="page" style="padding-bottom:0"><div class="card"><h3>Publish results for parents</h3>
+    <p class="hint" style="font-size:13px">Parents open one link, type their child's admission number and see only that child's results. They see the results you <b>publish</b> — publish again after you change marks.</p>
+    <div class="row"><div style="flex:1;min-width:240px"><label class="l">Marksheet to publish</label><select class="inp" onchange="PUB.pid=this.value">${list.map(p=>`<option value="${p.id}" ${p.id===PUB.pid?'selected':''}>${esc(p.name)}</option>`).join('')}</select></div>
+      <button class="btn" ${PUB.busy?'disabled':''} onclick="publishParents()">${PUB.busy?'Publishing…':'📢 Publish results'}</button>
+      ${pub?`<button class="btn out" onclick="unpublishParents()">Unpublish</button>`:''}</div>
+    <p style="font-size:13px;margin:10px 0 0">${pub?`Published: <b>${esc(pub.name)}</b> · ${new Date(S.school.publishedAt).toLocaleString()}`:'<span class="hint">Nothing is published yet.</span>'}</p>
+    <div class="row" style="margin-top:10px;flex-wrap:nowrap"><input class="inp" readonly value="${esc(link)}"><button class="btn out" onclick="copyText('${esc(link)}')">Copy parent link</button><a class="btn out" href="https://wa.me/?text=${encodeURIComponent(`Results of ${S.school.name||'our school'} are now available. Open this link and type your child's admission number:\n${link}`)}" target="_blank">WhatsApp</a></div>
+  </div></div>`;
+}
+async function publishParents(){
+  const p=S.profiles.find(x=>x.id===PUB.pid); if(!p) return toast('Choose a marksheet','err');
+  PUB.busy=true; pageParents(false);
+  try{
+    const ops=[], keep=new Set();
+    p.classes.forEach(c=>filled(c).forEach(st=>{ const k=admKey(st.admissionNo); if(!k||keep.has(k)) return; keep.add(k);
+      ops.push(['set','parentResults/'+k,clone({...buildParentReport(p,c,st),schoolName:S.school.name||'',publishedAt:Date.now()})]); }));
+    (await ADB.list('parentResults')).forEach(d=>{ if(!keep.has(d.id)) ops.push(['del','parentResults/'+d.id]); });
+    await ADB.batch(ops);
+    S.school.publishedPid=p.id; S.school.publishedAt=Date.now(); save(); toast(`Published ${keep.size} student result(s) for parents`);
+  }catch(e){ toast('Could not publish: '+((e&&e.code)||e),'err'); }
+  PUB.busy=false; pageParents(false);
+}
+async function unpublishParents(){ try{ const ops=(await ADB.list('parentResults')).map(d=>['del','parentResults/'+d.id]); await ADB.batch(ops); S.school.publishedPid=null; S.school.publishedAt=null; save(); toast('Results unpublished'); }
+  catch(e){ toast('Could not unpublish: '+((e&&e.code)||e),'err'); } pageParents(false); }
+async function parentSearch(standalone){
+  const q=document.getElementById('pq').value.trim(); PA.q=q; if(!q){ PA.r=undefined; return pageParents(standalone); }
+  if(!standalone){ PA.r=parentReport(q); return pageParents(false); }
+  PA.busy=true; pageParents(true);
+  try{ const r=await ADB.get('parentResults/'+admKey(q)); PA.r=r||null; }catch(e){ PA.r=null; toast('Could not search. Check your internet connection.','err'); }
+  PA.busy=false; pageParents(true);
+}
+
+// ---- TEACHER MODE (private link → one class only) ----
+function teacherLinks(){ try{ return JSON.parse(localStorage.getItem('bcc-teacher-links')||'[]'); }catch(e){ return []; } }
+function rememberLink(t){ const l=teacherLinks().filter(x=>x.token!==t.token); l.unshift(t); try{ localStorage.setItem('bcc-teacher-links',JSON.stringify(l.slice(0,6))); }catch(e){} }
+function forgetLink(token){ try{ localStorage.setItem('bcc-teacher-links',JSON.stringify(teacherLinks().filter(x=>x.token!==token))); }catch(e){} }
+function teacherError(msg,token){ if(token) forgetLink(token); try{ sessionStorage.removeItem('bcc-tmode'); }catch(e){}
+  $('#app').innerHTML=`<div class="login"><div class="card"><h3>Class teacher link</h3><p class="err">${esc(msg)}</p><a class="btn" href="#/" onclick="setTimeout(()=>location.reload(),50)">OK</a></div></div>`; }
+async function openTeacherLink(raw){
+  const token=String(raw||'').trim().replace(/^.*#\/t\//,'').replace(/[^a-f0-9]/gi,'').toLowerCase();
+  if(token.length<16) return toast('That does not look like a teacher link','err');
+  showLoading('Opening your class…');
+  try{
+    TDB=TDB||makeDB('teacher'); await TDB.authReady(); if(!TDB.currentUser()) await TDB.signInAnon();
+    const uid=TDB.currentUser().uid;
+    let tk=null; try{ tk=await TDB.get('linkTokens/'+token); }catch(e){ tk=null; }
+    if(!tk) return teacherError('This link is no longer active. Ask the admin to send you a new link.',token);
+    await TDB.set('teacherAccess/'+uid,{token,pid:tk.pid,cid:tk.cid,at:Date.now()});
+    const [sc,ms,cl]=await Promise.all([TDB.get('school/main'),TDB.get('marksheets/'+tk.pid),TDB.get(`marksheets/${tk.pid}/classes/${tk.cid}`)]);
+    if(!ms||!cl) return teacherError('This class could not be found. Ask the admin to send you a new link.',token);
+    SY.unsubs.forEach(u=>{ try{u();}catch(e){} }); SY.unsubs=[];
+    MODE='teacher'; ONLINE.admin=false;
+    S={school:{name:sc?.name||'',logo:sc?.logo||''},settings:{},activeId:tk.pid,teacher:{token},profiles:[{id:tk.pid,year:ms.year,term:ms.term,name:ms.name,sections:ms.sections||{},created:ms.created||0,classes:[{id:tk.cid,...cl}]}]};
+    const k=`marksheets/${tk.pid}/classes/${tk.cid}`; SY.db=TDB; SY.last={[k]:sj(classDoc(S.profiles[0].classes[0]))};
+    SY.unsubs.push(TDB.watchDoc(k,(d,local)=>{ if(local) return; if(!d) return teacherError('This class was deleted by the admin.',token); if(onRemote(k,d)) remoteRefresh(); },
+      ()=>teacherError('Your access to this class has been removed. Ask the admin for a new link.',token)));
+    rememberLink({token,cls:cl.name,term:ms.name}); try{ sessionStorage.setItem('bcc-tmode',token); }catch(e){}
+    ONLINE.ready=true; history.replaceState(null,'','#/marks'); $('#app').innerHTML=''; route();
+  }catch(e){ console.error(e); teacherError('Could not open the class: '+((e&&e.code)||e.message||e)); }
+}
+async function exitTeacher(){ await flushNow(); try{ sessionStorage.removeItem('bcc-tmode'); }catch(e){} location.hash='#/'; location.reload(); }
+
+// ---- Google Drive backup ----
+let GTOKEN=null, GEXP=0, GTC=null;
+function loadGIS(){ return new Promise((res,rej)=>{ if(window.google&&google.accounts&&google.accounts.oauth2) return res();
+  const s=document.createElement('script'); s.src='https://accounts.google.com/gsi/client'; s.async=true; s.onload=()=>res(); s.onerror=()=>rej(new Error('Could not load Google sign-in')); document.head.appendChild(s); }); }
+function driveToken(){ return new Promise((res,rej)=>{ if(GTOKEN&&Date.now()<GEXP) return res(GTOKEN);
+  if(!(window.google&&google.accounts&&google.accounts.oauth2)) return rej(new Error('Google sign-in is still loading — try again in a moment.'));
+  GTC=google.accounts.oauth2.initTokenClient({client_id:OAUTH_CLIENT_ID,scope:'https://www.googleapis.com/auth/drive.file',
+    callback:r=>{ if(r.error) return rej(new Error(r.error_description||r.error)); GTOKEN=r.access_token; GEXP=Date.now()+((r.expires_in||3600)-60)*1000; res(GTOKEN); },
+    error_callback:e=>rej(new Error(e&&e.type==='popup_closed'?'The Google window was closed.':'Google sign-in failed.'))});
+  GTC.requestAccessToken({prompt:''}); }); }
+async function gfetch(url,opt={}){ const t=GTOKEN; const r=await fetch(url,{...opt,headers:{...(opt.headers||{}),Authorization:'Bearer '+t}}); if(!r.ok) throw new Error('Google Drive error '+r.status+': '+(await r.text()).slice(0,160)); return r; }
+async function driveFolder(){
+  const q=encodeURIComponent("name='BCC Marks Backups' and mimeType='application/vnd.google-apps.folder' and trashed=false");
+  const r=await (await gfetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,webViewLink)`)).json();
+  if(r.files&&r.files.length) return r.files[0];
+  return await (await gfetch('https://www.googleapis.com/drive/v3/files?fields=id,name,webViewLink',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'BCC Marks Backups',mimeType:'application/vnd.google-apps.folder'})})).json();
+}
+async function driveUpload(folderId,name,blob){ const fd=new FormData(); fd.append('metadata',new Blob([JSON.stringify({name,parents:[folderId]})],{type:'application/json'})); fd.append('file',blob,name);
+  return await (await gfetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name',{method:'POST',body:fd})).json(); }
+async function backupToDrive(){
+  const out=$('#gdOut'), b=$('#gdB'); const say=t=>{ if(out) out.textContent=t; };
+  try{ say('Connecting to Google Drive…'); await driveToken(); if(b) b.disabled=true;
+    const folder=await driveFolder(); const stamp=new Date().toISOString().slice(0,16).replace('T','_').replace(':','-');
+    say('Uploading backup file…'); await driveUpload(folder.id,`marks-backup-${stamp}.json`,new Blob([JSON.stringify(backupObject())],{type:'application/json'}));
+    const books=S.profiles.filter(p=>p.classes.length);
+    for(const p of books){ say(`Uploading Excel: ${p.name}…`); await driveUpload(folder.id,fileSafe(`${p.name} - ${stamp}.xlsx`),XL.book(sortClasses(p.classes).map(c=>classSheet(c,p)))); }
+    S.settings={...(S.settings||{}),lastDriveBackup:Date.now()}; save();
+    say(''); if(out) out.innerHTML=`✓ Backed up to Google Drive (1 backup file + ${books.length} Excel workbook(s)). ${folder.webViewLink?`<a href="${folder.webViewLink}" target="_blank">Open the folder</a>`:''}`; toast('Backed up to Google Drive');
+  }catch(e){ say(''); toast(String(e.message||e),'err'); }
+  if(b) b.disabled=false;
+}
+async function driveRestoreList(){
+  try{ await driveToken(); const folder=await driveFolder();
+    const q=encodeURIComponent(`'${folder.id}' in parents and trashed=false and name contains 'marks-backup-'`);
+    const r=await (await gfetch(`https://www.googleapis.com/drive/v3/files?q=${q}&orderBy=createdTime desc&pageSize=20&fields=files(id,name,createdTime)`)).json();
+    const files=r.files||[];
+    modal(`<h2>Restore from Google Drive</h2>${files.length?`<div class="hint">Choose a backup. All online data will be replaced (you will be asked to confirm).</div>`+files.map(f=>`<button class="btn out" style="justify-content:space-between;width:100%" onclick="driveRestore('${f.id}')"><span>${esc(f.name)}</span><span class="hint">${new Date(f.createdTime).toLocaleString()}</span></button>`).join(''):'<p class="hint">No backups found in the BCC Marks Backups folder.</p>'}
+      <div class="foot"><button class="btn ghost" onclick="closeModal()">Close</button></div>`,'md');
+  }catch(e){ toast(String(e.message||e),'err'); }
+}
+async function driveRestore(id){ try{ const d=await (await gfetch(`https://www.googleapis.com/drive/v3/files/${id}?alt=media`)).json(); closeModal(); confirmRestore(d); }catch(e){ toast(String(e.message||e),'err'); } }
+
+// =====================================================================
+// Router
+// =====================================================================
+function route(){
+  if(!ONLINE.ready) return;
+  const h=location.hash||'#/'; closeModal();
+  if(h.startsWith('#/t/')) return openTeacherLink(h);
+  if(MODE==='teacher'){
+    if(!$('#view') || !$('#side')) $('#app').innerHTML='';
+    shell(); $('#side').classList.remove('open');
+    const hh=location.hash;
+    if(hh.startsWith('#/classes')) return pageClasses();
+    if(hh.startsWith('#/print')){ PR={mode:'list'}; return pagePrint(); }
+    if(hh.startsWith('#/reports')){ RP={mode:'home'}; return pageReports(); }
+    if(!hh.startsWith('#/marks')) history.replaceState(null,'','#/marks');
+    MK={mode:'list',preview:false,cid:null,sub:null}; return pageMarks();
+  }
+  if(h==='#/parent'){ PA={q:'',r:undefined}; return pageParents(true); }
+  if(!authed()) return renderLogin();
+  if(!$('#view') || !$('#side')) $('#app').innerHTML='';
+  shell(); $('#side').classList.remove('open');
+  if(h.startsWith('#/classes')) return pageClasses();
+  if(h.startsWith('#/marks')){ MK={mode:'list',preview:false,cid:null,sub:null}; return pageMarks(); }
+  if(h.startsWith('#/print')){ PR={mode:'list'}; return pagePrint(); }
+  if(h.startsWith('#/progress')){ SR={q:'',pick:null}; return pageSearch(); }
+  if(h.startsWith('#/reports')){ RP={mode:'home'}; return pageReports(); }
+  if(h.startsWith('#/access/teachers')) return pageTeacherAccess();
+  if(h.startsWith('#/access')||h.startsWith('#/parents')){ PA={q:'',r:undefined}; return needP() && pageParents(false); }
+  if(h.startsWith('#/data')) return pageData();
+  return pageSetup();
+}
+window.addEventListener('hashchange',route);
+boot();
+</script>
+<script type="module">
+if(!/[?&]mock=1/.test(location.search)){
+  const V='10.12.5', B=`https://www.gstatic.com/firebasejs/${V}/`;
+  try{
+    const [A,U,F]=await Promise.all([import(B+'firebase-app.js'),import(B+'firebase-auth.js'),import(B+'firebase-firestore.js')]);
+    window.FBX={initializeApp:A.initializeApp,getAuth:U.getAuth,signInWithEmailAndPassword:U.signInWithEmailAndPassword,createUserWithEmailAndPassword:U.createUserWithEmailAndPassword,
+      signInAnonymously:U.signInAnonymously,signOut:U.signOut,onAuthStateChanged:U.onAuthStateChanged,
+      initializeFirestore:F.initializeFirestore,persistentLocalCache:F.persistentLocalCache,persistentMultipleTabManager:F.persistentMultipleTabManager,
+      doc:F.doc,getDoc:F.getDoc,getDocs:F.getDocs,collection:F.collection,setDoc:F.setDoc,updateDoc:F.updateDoc,deleteDoc:F.deleteDoc,onSnapshot:F.onSnapshot,writeBatch:F.writeBatch,deleteField:F.deleteField,FieldPath:F.FieldPath};
+  }catch(e){ window.FBX_ERROR=e; console.error(e); }
+  window.dispatchEvent(new Event('fbx-ready'));
+}
+</script>
+</body>
+</html>

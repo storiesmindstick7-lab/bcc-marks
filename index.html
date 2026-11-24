@@ -381,8 +381,18 @@ function pageSetup(){
         <div class="nm">${esc(p.name)}</div>
         <div style="font-size:13px;line-height:1.6">${SECKEYS.map(k=>{ const n=secData(p,k).subjects.length, c=p.classes.filter(x=>secOf(x)===k).length; return `<div style="display:flex;justify-content:space-between;color:${n?'var(--fg)':'var(--muted)'}"><span>${esc(k)}</span><span class="hint">${n?`${n} subjects · ${c} class(es)`:'not used'}</span></div>`; }).join('')}</div>
         <div class="row" style="margin-top:8px"><button class="btn sm" onclick="openProfile('${p.id}')">Open ›</button><button class="btn out sm" onclick="openProfileForm('${p.id}')">✎ Edit</button><button class="btn out sm" onclick="askDeleteProfile('${p.id}')">🗑</button></div></div>`).join('')}</div>`}
-    </div></div>`);
+    </div>
+    <div class="card"><h3>Admin password</h3><div class="hint" style="margin-bottom:10px">Username stays <b>bcc123</b>. Use at least 6 characters; a mix of letters and numbers is safer.</div>
+      <div class="row"><div><label class="l">Current password</label><input class="inp" type="password" id="pwOld" autocomplete="current-password"></div>
+        <div><label class="l">New password</label><input class="inp" type="password" id="pwNew" autocomplete="new-password"></div>
+        <div><label class="l">Repeat new password</label><input class="inp" type="password" id="pwNew2" autocomplete="new-password"></div>
+        <button class="btn" onclick="changeAdminPassword()">Change password</button></div></div>
+    </div>`);
 }
+async function changeAdminPassword(){ const o=$('#pwOld').value, n=$('#pwNew').value, n2=$('#pwNew2').value;
+  if(n.length<6) return toast('New password must be at least 6 characters','err'); if(n!==n2) return toast('The two new passwords are different','err');
+  try{ await ADB.changePassword(o,n); ['#pwOld','#pwNew','#pwNew2'].forEach(x=>$(x).value=''); toast('Admin password changed — use the new password next time'); }
+  catch(e){ const c=(e&&e.code)||''; toast(/invalid-credential|wrong-password/.test(c)?'Current password is wrong':/weak/.test(c)?'New password is too weak':'Could not change the password: '+(c||e.message),'err'); } }
 function uploadLogo(f){
   if(!f) return; if(f.size>3*1024*1024) return toast('Logo must be under 3MB','err');
   const r=new FileReader(); r.onload=()=>{ const im=new Image(); im.onload=()=>{ const c=document.createElement('canvas'); const k=Math.min(1,300/Math.max(im.width,im.height)); c.width=Math.round(im.width*k);c.height=Math.round(im.height*k); c.getContext('2d').drawImage(im,0,0,c.width,c.height); S.school.logo=c.toDataURL('image/png'); save(); toast('Logo uploaded'); pageSetup(); }; im.src=r.result; }; r.readAsDataURL(f);
@@ -1229,6 +1239,7 @@ function fbDB(name){
   return { currentUser:()=>auth.currentUser, authReady:()=>ready,
     signIn:(e,p)=>F.signInWithEmailAndPassword(auth,e,p), signUp:(e,p)=>F.createUserWithEmailAndPassword(auth,e,p),
     signInAnon:()=>F.signInAnonymously(auth), signOut:()=>F.signOut(auth),
+    changePassword:async(oldPw,newPw)=>{ const u=auth.currentUser; await F.reauthenticateWithCredential(u,F.EmailAuthProvider.credential(u.email,oldPw)); await F.updatePassword(u,newPw); },
     get:async p=>{ const x=await F.getDoc(ref(p)); return x.exists()?x.data():null; },
     list:async p=>{ const x=await F.getDocs(F.collection(db,p)); return x.docs.map(d=>({id:d.id,data:d.data()})); },
     set:(p,d)=>F.setDoc(ref(p),d),
@@ -1244,7 +1255,7 @@ function mockDB(name){
   const KD='mockdb', subs=[]; const ch=('BroadcastChannel' in window)?new BroadcastChannel('mockdb'):null;
   const all=()=>{ try{ return JSON.parse(localStorage.getItem(KD))||{}; }catch(e){ return {}; } };
   const notify=p=>subs.slice().forEach(x=>x(p)); if(ch) ch.onmessage=e=>notify(e.data); window.addEventListener('storage',e=>{ if(e.key===KD) notify('*'); });
-  const write=(p,fn)=>{ const m=all(); const v=fn(m[p]); if(v===undefined) delete m[p]; else m[p]=v; localStorage.setItem(KD,JSON.stringify(m)); setTimeout(()=>{ notify(p); ch&&ch.postMessage(p); },0); return Promise.resolve(); };
+  const write=(p,fn)=>{ window.__writes=(window.__writes||0)+1; const m=all(); const v=fn(m[p]); if(v===undefined) delete m[p]; else m[p]=v; localStorage.setItem(KD,JSON.stringify(m)); setTimeout(()=>{ notify(p); ch&&ch.postMessage(p); },0); return Promise.resolve(); };
   const inCol=(k,p)=>k.startsWith(p+'/')&&!k.slice(p.length+1).includes('/');
   const AK='mockauth-'+name; let user=null; try{ user=JSON.parse(sessionStorage.getItem(AK)||localStorage.getItem(AK)); }catch(e){}
   const setUser=u=>{ user=u; localStorage.setItem(AK,JSON.stringify(u)); };
@@ -1253,6 +1264,7 @@ function mockDB(name){
     signIn:(e,p)=>{ const u=users()[e]; if(!u||u.p!==p) return Promise.reject({code:'auth/invalid-credential'}); setUser({uid:u.uid,email:e}); return Promise.resolve(); },
     signUp:(e,p)=>{ const us=users(); if(us[e]) return Promise.reject({code:'auth/email-already-in-use'}); us[e]={p,uid:'u'+uid()}; localStorage.setItem('mockusers',JSON.stringify(us)); setUser({uid:us[e].uid,email:e}); return Promise.resolve(); },
     signInAnon:()=>{ setUser({uid:'a'+uid(),email:null}); return Promise.resolve(); }, signOut:()=>{ setUser(null); return Promise.resolve(); },
+    changePassword:(o,n)=>{ const us=users(); const u=us[user.email]; if(!u||u.p!==o) return Promise.reject({code:'auth/invalid-credential'}); u.p=n; localStorage.setItem('mockusers',JSON.stringify(us)); return Promise.resolve(); },
     get:p=>Promise.resolve(clone(all()[p]??null)),
     list:p=>Promise.resolve(Object.entries(all()).filter(([k])=>inCol(k,p)).map(([k,v])=>({id:k.slice(p.length+1),data:clone(v)}))),
     set:(p,d)=>write(p,()=>clone(d)),
@@ -1314,9 +1326,12 @@ function diffPairs(a,b){ const pairs=[]; a=a||{}; b=b||{};
     new Set([...Object.keys(x),...Object.keys(y)]).forEach(sub=>{ if(x[sub]!==y[sub]) pairs.push([['marks',sid,sub], sub in y?y[sub]:DEL]); });
   });
   return pairs; }
-function queueSync(){ if(!SY.db) return; clearTimeout(SY.timer); SY.timer=setTimeout(flush,450); setSync(); }
+const SAVE_DELAY=2500, SAVE_MAX=6000;            // group many marks into one write
+function queueSync(){ if(!SY.db) return; const now=Date.now(); if(!SY.since) SY.since=now;
+  clearTimeout(SY.timer); const wait=Math.max(0,Math.min(SAVE_DELAY, SY.since+SAVE_MAX-now)); SY.timer=setTimeout(flush,wait); setSync(); }
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden'&&SY.timer) flush(); });
 function flush(){
-  clearTimeout(SY.timer); SY.timer=null; if(!SY.db) return;
+  clearTimeout(SY.timer); SY.timer=null; SY.since=0; if(!SY.db) return;
   if(MODE==='teacher'){ const c=S.profiles[0].classes[0], k=`marksheets/${S.profiles[0].id}/classes/${c.id}`;
     if(SY.last[k]!==undefined && sj(classDoc(c))!==SY.last[k]){ c.updatedAt=Date.now(); c.updatedBy=c.teacher||'Class teacher'; } }
   const now=localDocs(), ops=[];
@@ -1620,7 +1635,7 @@ if(!/[?&]mock=1/.test(location.search)){
   try{
     const [A,U,F]=await Promise.all([import(B+'firebase-app.js'),import(B+'firebase-auth.js'),import(B+'firebase-firestore.js')]);
     window.FBX={initializeApp:A.initializeApp,getAuth:U.getAuth,signInWithEmailAndPassword:U.signInWithEmailAndPassword,createUserWithEmailAndPassword:U.createUserWithEmailAndPassword,
-      signInAnonymously:U.signInAnonymously,signOut:U.signOut,onAuthStateChanged:U.onAuthStateChanged,
+      signInAnonymously:U.signInAnonymously,signOut:U.signOut,onAuthStateChanged:U.onAuthStateChanged,updatePassword:U.updatePassword,reauthenticateWithCredential:U.reauthenticateWithCredential,EmailAuthProvider:U.EmailAuthProvider,
       initializeFirestore:F.initializeFirestore,persistentLocalCache:F.persistentLocalCache,persistentMultipleTabManager:F.persistentMultipleTabManager,
       doc:F.doc,getDoc:F.getDoc,getDocs:F.getDocs,collection:F.collection,setDoc:F.setDoc,updateDoc:F.updateDoc,deleteDoc:F.deleteDoc,onSnapshot:F.onSnapshot,writeBatch:F.writeBatch,deleteField:F.deleteField,FieldPath:F.FieldPath};
   }catch(e){ window.FBX_ERROR=e; console.error(e); }
